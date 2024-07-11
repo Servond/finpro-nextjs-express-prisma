@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,12 +7,99 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  user_id      Int        @id @default(autoincrement())
+  username     String
+  password     String
+  email        String
+  full_name    String
+  phone_number String
+  role         Role
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  events       Event[]    @relation("EventCreatedBy")
+  ratings      Rating[]
+  referrals    Referral[] @relation("ReferralUser")
+}
 
-  @@map("samples") // if you want to use snake_case format
+model Event {
+  event_id          Int           @id @default(autoincrement())
+  event_name        String
+  event_description String
+  event_date        DateTime
+  event_time        DateTime
+  event_location    String
+  available_seats   Int
+  created_by        Int
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  category_id       Int
+  category          EventCategory @relation(fields: [category_id], references: [category_id])
+  tickets           Ticket[]
+  ratings           Rating[]
+  promotions        Promotion[]
+  creator           User          @relation("EventCreatedBy", fields: [created_by], references: [user_id])
+
+  @@index([category_id])
+}
+
+model Ticket {
+  ticket_id   Int      @id @default(autoincrement())
+  event_id    Int
+  ticket_type String
+  price       Float
+  quantity    Int
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  event       Event    @relation(fields: [event_id], references: [event_id])
+}
+
+model EventCategory {
+  category_id   Int     @id @default(autoincrement())
+  category_name String
+  description   String
+  events        Event[]
+}
+
+model Payment {
+  payment_id     Int      @id @default(autoincrement())
+  payment_method String
+  payment_status String
+  payment_date   DateTime @default(now())
+}
+
+model Rating {
+  rating_id  Int      @id @default(autoincrement())
+  event_id   Int
+  user_id    Int
+  rating     Int
+  comment    String
+  created_at DateTime @default(now())
+  event      Event    @relation(fields: [event_id], references: [event_id])
+  user       User     @relation(fields: [user_id], references: [user_id])
+}
+
+model Promotion {
+  promotion_id        String   @id
+  event_id            Int
+  discount_percentage Float
+  valid_from          DateTime
+  valid_until         DateTime
+  max_uses            Int
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+  event               Event    @relation(fields: [event_id], references: [event_id])
+}
+
+model Referral {
+  referral_id    String   @id
+  referrer_id    Int
+  points_awarded Int
+  created_at     DateTime @default(now())
+  user           User     @relation("ReferralUser", fields: [referrer_id], references: [user_id])
+}
+
+enum Role {
+  participant
+  organizer
 }
