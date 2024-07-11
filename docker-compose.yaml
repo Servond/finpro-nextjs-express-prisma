@@ -1,0 +1,28 @@
+networks:
+  event-management-network:
+    name: event-management-network
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3000'
+    volumes:
+      - .:/app
+      - '/app/node_modules'
+    depends_on:
+      - mysql_server
+    networks:
+      - event-management-network
+
+  mysql_server:
+    image: mysql
+    ports:
+      - '3307:3306'
+    environment:
+      - MYSQL_DATABASE=jcwdol014
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - event-management-network
