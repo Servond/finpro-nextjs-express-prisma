@@ -1,6 +1,5 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -36,12 +35,13 @@ model Event {
   updated_at        DateTime      @updatedAt
   category_id       Int
   category          EventCategory @relation(fields: [category_id], references: [category_id])
-  tickets           Ticket[]
-  ratings           Rating[]
-  promotions        Promotion[]
   creator           User          @relation("EventCreatedBy", fields: [created_by], references: [user_id])
+  promotions        Promotion[]
+  ratings           Rating[]
+  tickets           Ticket[]
 
   @@index([category_id])
+  @@index([created_by], map: "Event_created_by_fkey")
 }
 
 model Ticket {
@@ -53,6 +53,8 @@ model Ticket {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
   event       Event    @relation(fields: [event_id], references: [event_id])
+
+  @@index([event_id], map: "Ticket_event_id_fkey")
 }
 
 model EventCategory {
@@ -78,6 +80,9 @@ model Rating {
   created_at DateTime @default(now())
   event      Event    @relation(fields: [event_id], references: [event_id])
   user       User     @relation(fields: [user_id], references: [user_id])
+
+  @@index([event_id], map: "Rating_event_id_fkey")
+  @@index([user_id], map: "Rating_user_id_fkey")
 }
 
 model Promotion {
@@ -90,6 +95,8 @@ model Promotion {
   created_at          DateTime @default(now())
   updated_at          DateTime @updatedAt
   event               Event    @relation(fields: [event_id], references: [event_id])
+
+  @@index([event_id], map: "Promotion_event_id_fkey")
 }
 
 model Referral {
@@ -98,9 +105,12 @@ model Referral {
   points_awarded Int
   created_at     DateTime @default(now())
   user           User     @relation("ReferralUser", fields: [referrer_id], references: [user_id])
+
+  @@index([referrer_id], map: "Referral_referrer_id_fkey")
 }
 
 enum Role {
   participant
   organizer
 }
+
