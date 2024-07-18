@@ -20,6 +20,10 @@ export class UserRouter {
 			"/:user_id",
 			this.userController.getUserById.bind(this.userController),
 		);
+		this.router.get(
+			"/:field/:value",
+			this.userController.getUserByField.bind(this.userController),
+		);
 		this.router.post(
 			"/",
 			this.userController.createUser.bind(this.userController),
