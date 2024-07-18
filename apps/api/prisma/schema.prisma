@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-  user_id      Int        @id @default(autoincrement())
+  user_id      Int           @id @default(autoincrement())
   username     String
   password     String
   email        String
   full_name    String
   phone_number String
   role         Role
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
-  events       Event[]    @relation("EventCreatedBy")
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  events       Event[]       @relation("EventCreatedBy")
   ratings      Rating[]
-  referrals    Referral[] @relation("ReferralUser")
+  referrals    Referral[]    @relation("ReferralUser")
+  transactions Transaction[]
 }
 
 model Event {
@@ -45,14 +46,15 @@ model Event {
 }
 
 model Ticket {
-  ticket_id   Int      @id @default(autoincrement())
-  event_id    Int
-  ticket_type String
-  price       Float
-  quantity    Int
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  event       Event    @relation(fields: [event_id], references: [event_id])
+  ticket_id    Int           @id @default(autoincrement())
+  event_id     Int
+  ticket_type  String
+  price        Float
+  quantity     Int
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  event        Event         @relation(fields: [event_id], references: [event_id])
+  transactions Transaction[]
 
   @@index([event_id], map: "Ticket_event_id_fkey")
 }
@@ -65,10 +67,11 @@ model EventCategory {
 }
 
 model Payment {
-  payment_id     Int      @id @default(autoincrement())
+  payment_id     Int           @id @default(autoincrement())
   payment_method String
   payment_status String
-  payment_date   DateTime @default(now())
+  payment_date   DateTime      @default(now())
+  transactions   Transaction[]
 }
 
 model Rating {
@@ -109,8 +112,26 @@ model Referral {
   @@index([referrer_id], map: "Referral_referrer_id_fkey")
 }
 
+model Transaction {
+  transaction_id   Int      @id @default(autoincrement())
+  user_id          Int
+  ticket_id        Int
+  transaction_date DateTime @default(now())
+  quantity         Int
+  total_amount     Float
+  payment_id       Int
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+  user             User     @relation(fields: [user_id], references: [user_id])
+  ticket           Ticket   @relation(fields: [ticket_id], references: [ticket_id])
+  payment          Payment  @relation(fields: [payment_id], references: [payment_id])
+
+  @@index([user_id], map: "Transaction_user_id_fkey")
+  @@index([ticket_id], map: "Transaction_ticket_id_fkey")
+  @@index([payment_id], map: "Transaction_payment_id_fkey")
+}
+
 enum Role {
   participant
   organizer
 }
-

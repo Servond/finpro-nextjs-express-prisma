@@ -10,16 +10,17 @@
     "test": "npx cypress verify & cypress run --component"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.51.1",
+    "bcryptjs": "^2.4.3",
     "cross-env": "^7.0.3",
     "next": "14.0.4",
+    "next-auth": "^5.0.0-beta.19",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^5.51.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
