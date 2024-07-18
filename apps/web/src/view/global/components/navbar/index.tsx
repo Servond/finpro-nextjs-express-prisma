@@ -50,7 +50,7 @@ const Navbar = () => {
               width={60}
               height={60}
           />
-            <Typography>MProject</Typography>
+            <Typography>Mini Project</Typography>
           </Box>
           {isLogin == false ? (
             <Stack direction="row" spacing={1}>
