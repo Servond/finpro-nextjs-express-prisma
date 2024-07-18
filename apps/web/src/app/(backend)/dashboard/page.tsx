@@ -1,24 +1,27 @@
-'use client';
+import { signIn, signOut } from '@/auth';
 
-import { useQuery } from '@tanstack/react-query';
-
-const Page = () => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['todos'],
-    queryFn: () =>
-      fetch('https://jsonplaceholder.typicode.com/todos').then((res) =>
-        res.json(),
-      ),
-  });
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-
+const Page = async () => {
   return (
     <div>
-      {data.map((todo: any) => (
-        <div key={todo.id}>{todo.id}</div>
-      ))}
+      <h1>SIGN IN HERE</h1>
+      <form
+        action={async () => {
+          'use server';
+          await signIn();
+        }}
+      >
+        <button type="submit">Sign In</button>
+      </form>
+
+      <h1>SIGN OUT HERE</h1>
+      <form
+        action={async () => {
+          'use server';
+          await signOut();
+        }}
+      >
+        <button type="submit">Sign In</button>
+      </form>
     </div>
   );
 };
