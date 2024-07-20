@@ -27,41 +27,24 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { useRouter } from 'next/navigation';
-import { hash } from 'bcryptjs';
+import Link from 'next/link';
+import { Register } from '@/utils/actions/authentication';
 
 export default function RegisterForm() {
-  const router = useRouter();
   const form = useForm<User>({
     resolver: zodResolver(userSchema),
   });
 
   const { control, handleSubmit } = form;
 
-  const onSubmit = async (values: User) => {
-    const hashedPassword = await hash(values.password, 10);
-    const user = { ...values, password: hashedPassword };
-    await fetch('http://localhost:8000/api/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    });
-    router.push('/dashboard');
-  };
-
   return (
     <Form {...form}>
-      <form className="w-full max-w-md" onSubmit={handleSubmit(onSubmit)}>
-        <Card>
-          <CardHeader>
+      <form className="w-full max-w-md" onSubmit={handleSubmit(Register)}>
+        <Card className="w-full max-w-md space-y-4">
+          <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">Register</CardTitle>
             <CardDescription>
-              If you already have an account, please{' '}
-              <a href="/auth/login" className="text-blue-500 underline">
-                sign in here
-              </a>
+              Enter your details to create an account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -195,10 +178,21 @@ export default function RegisterForm() {
               )}
             />
           </CardContent>
+
           <CardFooter>
-            <Button type="submit" className="w-full">
-              Sign In
-            </Button>
+            <div className="flex flex-col gap-2 w-full">
+              <div className="w-full">
+                <Button type="submit" className="w-full">
+                  Login
+                </Button>
+              </div>
+              <div className="text-center text-sm">
+                Already have an account?{' '}
+                <Link href="/auth/login" className="text-blue-600">
+                  Sign In
+                </Link>
+              </div>
+            </div>
           </CardFooter>
         </Card>
       </form>

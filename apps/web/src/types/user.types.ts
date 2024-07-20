@@ -13,6 +13,8 @@ export const userSchema = z.object({
 		.string()
 		.min(10, "Phone number must be at least 10 characters long"),
 	role: z.enum(["participant", "organizer"]),
+	created_at: z.string().nullable().optional(),
+	updated_at: z.string().nullable().optional(),
 });
 
 export type User = z.infer<typeof userSchema>;

@@ -1,6 +1,6 @@
 import NextAuth, { CredentialsSignin, NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
+import { compare, hash } from "bcryptjs";
 
 const nextAuthConfig = {
 	providers: [
@@ -19,8 +19,6 @@ const nextAuthConfig = {
 					throw new CredentialsSignin("Missing credentials");
 				}
 
-				console.log(email, password);
-
 				user = await fetch(
 					`http://localhost:8000/api/users/email/${email}`,
 				).then((res) => res.json());
@@ -29,8 +27,9 @@ const nextAuthConfig = {
 				if (!user.password)
 					throw new CredentialsSignin("Invalid email or password");
 
-				const isPasswordValid = compare(password, user.password);
-				console.log(password, user.password, isPasswordValid);
+				const hashedPassword = await hash(password, 10);
+
+				const isPasswordValid = compare(hashedPassword, user.password);
 
 				if (!isPasswordValid)
 					throw new CredentialsSignin("Invalid email or password");
@@ -39,10 +38,21 @@ const nextAuthConfig = {
 			},
 		}),
 	],
+	callbacks: {
+		async jwt({ token, user }) {
+			user && (token.user = user);
+			return token;
+		},
+		async session({ session, token }) {
+			session.user = token.user as any;
+			return session;
+		},
+	},
 	pages: {
-		signIn: "/auth/login",
+		// signIn: "/auth/login",
 		newUser: "/auth/register",
 	},
+	secret: process.env.NEXT_AUTH_SECRET,
 } satisfies NextAuthConfig;
 
 export const { handlers, signIn, signOut, auth } = NextAuth(nextAuthConfig);
