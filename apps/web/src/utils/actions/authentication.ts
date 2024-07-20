@@ -1,12 +1,12 @@
 "use server";
 import { LoginFormValues } from "@/components/auth/LoginForm";
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { User } from "@/types/user.types";
 import { redirect, useRouter } from "next/navigation";
 import { hash } from "bcryptjs";
 
-const LoginAction = async (data: LoginFormValues) => {
+export const LoginAction = async (data: LoginFormValues) => {
 	const credentialsData = {
 		email: data.email,
 		password: data.password,
@@ -29,7 +29,7 @@ const LoginAction = async (data: LoginFormValues) => {
 	}
 };
 
-const RegisterAction = async (values: User) => {
+export const RegisterAction = async (values: User) => {
 	const hashedPassword = await hash(values.password, 10);
 	const user = { ...values, password: hashedPassword };
 	const res = await fetch("http://localhost:8000/api/users", {
@@ -46,4 +46,10 @@ const RegisterAction = async (values: User) => {
 	}
 };
 
-export { LoginAction, RegisterAction };
+export const getSession = async () => {
+	const session = await auth();
+
+	if (!session?.user) return null;
+
+	return session.user as User;
+};
