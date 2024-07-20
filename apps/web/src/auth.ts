@@ -49,7 +49,7 @@ const nextAuthConfig = {
 		},
 	},
 	pages: {
-		// signIn: "/auth/login",
+		signIn: "/auth/login",
 		newUser: "/auth/register",
 	},
 	secret: process.env.NEXT_AUTH_SECRET,

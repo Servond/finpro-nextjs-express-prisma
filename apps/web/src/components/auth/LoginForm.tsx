@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/form';
 import Link from 'next/link';
 import { z } from 'zod';
-import { Login } from '@/utils/actions/authentication';
+import { LoginAction } from '@/utils/actions/authentication';
 
 export const loginFormSchema = z.object({
   email: z.string().email(),
@@ -36,10 +36,13 @@ export default function LoginForm() {
   });
 
   const { control, handleSubmit } = form;
+  const onSubmit = (data: LoginFormValues) => {
+    LoginAction(JSON.parse(JSON.stringify(data)));
+  };
 
   return (
     <Form {...form}>
-      <form className="w-full max-w-md" onSubmit={handleSubmit(Login)}>
+      <form className="w-full max-w-md" onSubmit={handleSubmit(onSubmit)}>
         <Card className="w-full max-w-md space-y-4">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">Login</CardTitle>

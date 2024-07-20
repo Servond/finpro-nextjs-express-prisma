@@ -28,7 +28,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import Link from 'next/link';
-import { Register } from '@/utils/actions/authentication';
+import { RegisterAction } from '@/utils/actions/authentication';
 
 export default function RegisterForm() {
   const form = useForm<User>({
@@ -37,9 +37,13 @@ export default function RegisterForm() {
 
   const { control, handleSubmit } = form;
 
+  const onSubmit = (data: User) => {
+    RegisterAction(JSON.parse(JSON.stringify(data)));
+  };
+
   return (
     <Form {...form}>
-      <form className="w-full max-w-md" onSubmit={handleSubmit(Register)}>
+      <form className="w-full max-w-md" onSubmit={handleSubmit(onSubmit)}>
         <Card className="w-full max-w-md space-y-4">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">Register</CardTitle>
@@ -183,7 +187,7 @@ export default function RegisterForm() {
             <div className="flex flex-col gap-2 w-full">
               <div className="w-full">
                 <Button type="submit" className="w-full">
-                  Login
+                  Register
                 </Button>
               </div>
               <div className="text-center text-sm">
