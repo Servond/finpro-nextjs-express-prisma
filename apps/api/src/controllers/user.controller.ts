@@ -1,6 +1,27 @@
 import { Request, Response } from "express";
 import prisma from "@/prisma";
 
+async function generateUniqueReferralCode() {
+	let referralCode;
+	let isUnique = false;
+
+	while (!isUnique) {
+		referralCode = Math.random().toString(36).substring(2, 9).toUpperCase();
+
+		const existingReferral = await prisma.referral.findFirst({
+			where: {
+				referral_code: referralCode,
+			},
+		});
+
+		if (!existingReferral) {
+			isUnique = true;
+		}
+	}
+
+	return referralCode;
+}
+
 export class UserController {
 	async getUsers(req: Request, res: Response) {
 		try {
@@ -29,7 +50,6 @@ export class UserController {
 		}
 	}
 
-	// do /api/users?name=1
 	async getUserByField(req: Request, res: Response) {
 		try {
 			const { field, value } = req.params;
@@ -55,12 +75,39 @@ export class UserController {
 			const { username, password, email, full_name, phone_number, role } =
 				req.body;
 
-			const newUser = await prisma.user.create({
-				data: { username, password, email, full_name, phone_number, role },
+			const newUser = await prisma.$transaction(async (prisma) => {
+				const user = await prisma.user.create({
+					data: { username, password, email, full_name, phone_number, role },
+				});
+
+				const referralCode = await generateUniqueReferralCode();
+				const expirationDate = new Date(
+					new Date().setMonth(new Date().getMonth() + 3),
+				);
+
+				const referral = await prisma.referral.create({
+					data: {
+						referral_code: referralCode as string,
+						referrer_id: user.user_id,
+						expires_at: expirationDate,
+					},
+				});
+
+				const points = await prisma.points.create({
+					data: {
+						referral_id: referral.referral_id,
+						user_id: user.user_id,
+						points: 0,
+						expires_at: expirationDate,
+					},
+				});
+
+				return { user, referral, points };
 			});
 
 			return res.status(201).send(newUser);
 		} catch (error) {
+			console.error("Error creating user:", error);
 			return res.status(500).send({ error: "Failed to create user" });
 		}
 	}

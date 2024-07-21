@@ -12,7 +12,8 @@
     "db:migrate": "dotenv -e .env.development -- npx prisma migrate dev",
     "db:generate": "dotenv -e .env.development -- npx prisma generate",
     "db:push": "dotenv -e .env.development -- npx prisma db push",
-    "db:pull": "dotenv -e .env.development -- npx prisma db pull"
+    "db:pull": "dotenv -e .env.development -- npx prisma db pull",
+    "db:studio": "dotenv -e .env.development -- npx prisma studio"
   },
   "author": "",
   "license": "ISC",

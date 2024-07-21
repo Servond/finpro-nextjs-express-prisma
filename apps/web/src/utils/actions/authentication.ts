@@ -3,7 +3,7 @@ import { LoginFormValues } from "@/components/auth/LoginForm";
 import { auth, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { User } from "@/types/user.types";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { hash } from "bcryptjs";
 
 export const LoginAction = async (data: LoginFormValues) => {

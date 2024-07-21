@@ -21,6 +21,33 @@ model User {
   ratings      Rating[]
   referrals    Referral[]    @relation("ReferralUser")
   transactions Transaction[]
+  points       Points[]      @relation("UserPoints")
+}
+
+model Referral {
+  referral_id   Int      @id @default(autoincrement())
+  referrer_id   Int
+  referral_code String   @unique
+  created_at    DateTime @default(now())
+  expires_at    DateTime
+  user          User     @relation("ReferralUser", fields: [referrer_id], references: [user_id])
+  points        Points[] @relation("ReferralPoints")
+
+  @@index([referrer_id], map: "Referral_referrer_id_fkey")
+}
+
+model Points {
+  points_id   Int      @id @default(autoincrement())
+  referral_id Int
+  user_id     Int
+  points      Int
+  created_at  DateTime @default(now())
+  expires_at  DateTime
+  user        User     @relation("UserPoints", fields: [user_id], references: [user_id])
+  referral    Referral @relation("ReferralPoints", fields: [referral_id], references: [referral_id])
+
+  @@index([user_id], map: "Points_user_id_fkey")
+  @@index([referral_id], map: "Points_referral_id_fkey")
 }
 
 model Event {
@@ -89,7 +116,7 @@ model Rating {
 }
 
 model Promotion {
-  promotion_id        String   @id
+  promotion_id        Int      @id @default(autoincrement())
   event_id            Int
   discount_percentage Float
   valid_from          DateTime
@@ -102,16 +129,6 @@ model Promotion {
   @@index([event_id], map: "Promotion_event_id_fkey")
 }
 
-model Referral {
-  referral_id    String   @id
-  referrer_id    Int
-  points_awarded Int
-  created_at     DateTime @default(now())
-  user           User     @relation("ReferralUser", fields: [referrer_id], references: [user_id])
-
-  @@index([referrer_id], map: "Referral_referrer_id_fkey")
-}
-
 model Transaction {
   transaction_id   Int      @id @default(autoincrement())
   user_id          Int
@@ -122,9 +139,9 @@ model Transaction {
   payment_id       Int
   created_at       DateTime @default(now())
   updated_at       DateTime @updatedAt
-  user             User     @relation(fields: [user_id], references: [user_id])
-  ticket           Ticket   @relation(fields: [ticket_id], references: [ticket_id])
   payment          Payment  @relation(fields: [payment_id], references: [payment_id])
+  ticket           Ticket   @relation(fields: [ticket_id], references: [ticket_id])
+  user             User     @relation(fields: [user_id], references: [user_id])
 
   @@index([user_id], map: "Transaction_user_id_fkey")
   @@index([ticket_id], map: "Transaction_ticket_id_fkey")
