@@ -11,6 +11,7 @@ import cors from "cors";
 import { PORT } from "./config";
 import { UserRouter } from "./routers/user.router";
 import { ReferralRouter } from "./routers/referral.router";
+import { PointsRouter } from "./routers/points.router";
 
 export default class App {
 	private app: Express;
@@ -54,6 +55,7 @@ export default class App {
 	private routes(): void {
 		const userRouter = new UserRouter();
 		const referralRouter = new ReferralRouter();
+		const pointRouter = new PointsRouter();
 
 		this.app.get("/api", (req: Request, res: Response) => {
 			res.send(`Hello, Purwadhika Student API!`);
@@ -61,6 +63,7 @@ export default class App {
 
 		this.app.use("/api/users", userRouter.getRouter());
 		this.app.use("/api/referrals", referralRouter.getRouter());
+		this.app.use("/api/points", pointRouter.getRouter());
 	}
 
 	public start(): void {

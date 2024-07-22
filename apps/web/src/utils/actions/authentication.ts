@@ -3,8 +3,9 @@ import { LoginFormValues } from "@/components/auth/LoginForm";
 import { auth, signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { User } from "@/types/user.types";
-import { redirect } from "next/navigation";
 import { hash } from "bcryptjs";
+import { redirect } from "next/navigation";
+import { RegisterFormValues } from "@/components/auth/RegisterForm";
 
 export const LoginAction = async (data: LoginFormValues) => {
 	const credentialsData = {
@@ -29,20 +30,48 @@ export const LoginAction = async (data: LoginFormValues) => {
 	}
 };
 
-export const RegisterAction = async (values: User) => {
-	const hashedPassword = await hash(values.password, 10);
-	const user = { ...values, password: hashedPassword };
-	const res = await fetch("http://localhost:8000/api/users", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(user),
-	});
-	if (res.ok) {
-		redirect("/auth/login");
-	} else {
+export const RegisterAction = async (values: RegisterFormValues) => {
+	try {
+		const hashedPassword = await hash(values.password, 10);
+		const { referral, ...userValues } = values;
+
+		const user = {
+			...userValues,
+			password: hashedPassword,
+		};
+
+		console.log(referral);
+
+		const res = await fetch("http://localhost:8000/api/users", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(user),
+		});
+		if (!res.ok) return { error: "Something went wrong!" };
+
+		if (referral) {
+			const referralRes = await fetch(
+				`http://localhost:8000/api/points/${referral}`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				},
+			);
+
+			if (!referralRes.ok)
+				return {
+					error: "User created but referral points not added!",
+				};
+		}
+	} catch (error) {
+		console.error("Error:", error);
 		return { error: "Something went wrong!" };
+	} finally {
+		redirect("/auth/login");
 	}
 };
 

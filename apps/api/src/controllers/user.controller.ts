@@ -93,16 +93,7 @@ export class UserController {
 					},
 				});
 
-				const points = await prisma.points.create({
-					data: {
-						referral_id: referral.referral_id,
-						user_id: user.user_id,
-						points: 0,
-						expires_at: expirationDate,
-					},
-				});
-
-				return { user, referral, points };
+				return { user, referral };
 			});
 
 			return res.status(201).send(newUser);

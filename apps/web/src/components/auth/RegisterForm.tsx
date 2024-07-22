@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
-import { User, userSchema } from '@/types/user.types';
+import { userSchema } from '@/types/user.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -29,15 +29,21 @@ import {
 } from '@/components/ui/form';
 import Link from 'next/link';
 import { RegisterAction } from '@/utils/actions/authentication';
+import { z } from 'zod';
+
+const registerFormSchema = userSchema.extend({
+  referral: z.string().nullable().optional(),
+});
+export type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
 export default function RegisterForm() {
-  const form = useForm<User>({
-    resolver: zodResolver(userSchema),
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerFormSchema),
   });
 
   const { control, handleSubmit } = form;
 
-  const onSubmit = (data: User) => {
+  const onSubmit = (data: RegisterFormValues) => {
     RegisterAction(JSON.parse(JSON.stringify(data)));
   };
 
@@ -107,6 +113,7 @@ export default function RegisterForm() {
                   </div>
                 )}
               />
+
               <FormField
                 control={control}
                 name="email"
@@ -139,6 +146,27 @@ export default function RegisterForm() {
                         type="tel"
                         placeholder="Enter your phone number"
                         {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </div>
+                )}
+              />
+              <FormField
+                control={control}
+                name="referral"
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <FormLabel htmlFor="referral">
+                      Referral (optional)
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        id="referral"
+                        type="text"
+                        placeholder="Enter your referral code"
+                        {...field}
+                        value={field.value ?? ''}
                       />
                     </FormControl>
                     <FormMessage />
