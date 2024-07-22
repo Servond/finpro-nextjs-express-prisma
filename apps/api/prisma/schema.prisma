@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,12 +7,120 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model User {
+  user_id           Int        @id @default(autoincrement())
+  username          String     @unique
+  email             String     @unique
+  password          String
+  first_name        String
+  last_name         String
+  own_referral_code String?    @unique
+  point_balance     Int        @default(0)
+  role_id           Int
+  created_at        DateTime   @default(now())
+  updated_at        DateTime   @updatedAt
+  role              Role       @relation(fields: [role_id], references: [id])
+  events            Event[]    @relation("EventOrganizer")
+  referralsGiven    Referral[] @relation("Referrer")
+  referralsReceived Referral[] @relation("Referred")
 
-  @@map("samples") // if you want to use snake_case format
+  @@index([username])
+  @@index([email])
+  @@index([own_referral_code])
+}
+
+model Referral {
+  id             Int      @id @default(autoincrement())
+  referral_code  String
+  referrer_id    Int
+  referred_id    Int
+  points_awarded Int
+  created_at     DateTime @default(now())
+  valid_until    DateTime
+  referrer       User     @relation("Referrer", fields: [referrer_id], references: [user_id])
+  referred       User     @relation("Referred", fields: [referred_id], references: [user_id])
+
+  @@unique([referrer_id, referred_id])
+  @@index([referral_code])
+  @@index([referrer_id])
+  @@index([referred_id])
+}
+
+model Role {
+  id        Int    @id @default(autoincrement())
+  role_name String
+  User      User[]
+}
+
+model Promotion {
+  promotion_id         Int              @id @default(autoincrement())
+  event_id             Int
+  discount_value       Float
+  discount_category_id Int
+  start_date           DateTime
+  end_date             DateTime
+  created_at           DateTime         @default(now())
+  discountCategory     DiscountCategory @relation(fields: [discount_category_id], references: [id])
+  event                Event            @relation(fields: [event_id], references: [event_id])
+
+  @@index([event_id])
+  @@index([discount_category_id])
+}
+
+model DiscountCategory {
+  id          Int         @id @default(autoincrement())
+  name        String
+  description String?
+  promotions  Promotion[]
+
+  @@unique([name])
+}
+
+model Event {
+  event_id          Int              @id @default(autoincrement())
+  organizer_id      Int
+  event_name        String
+  event_description String           @db.VarChar(2000)
+  original_price    Float
+  start_date        DateTime
+  end_date          DateTime
+  location_id       Int
+  total_seats       Int
+  available_seats   Int
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  organizer         User             @relation("EventOrganizer", fields: [organizer_id], references: [user_id])
+  location          Location         @relation(fields: [location_id], references: [location_id])
+  categories        Event_Category[]
+  promotions        Promotion[]
+
+  @@index([organizer_id])
+  @@index([location_id])
+}
+
+model Location {
+  location_id Int     @id @default(autoincrement())
+  city_name   String
+  events      Event[]
+}
+
+model Category {
+  category_id Int              @id @default(autoincrement())
+  name        String
+  events      Event_Category[]
+}
+
+model Event_Category {
+  event_id    Int
+  category_id Int
+  event       Event    @relation(fields: [event_id], references: [event_id])
+  category    Category @relation(fields: [category_id], references: [category_id])
+
+  @@id([event_id, category_id])
+}
+
+model Ticket_Type {
+  type_id   Int    @id @default(autoincrement())
+  type_name String
+  price     Float
 }

@@ -1,7 +1,7 @@
 import App from './app';
 
 const main = () => {
-  // init db here
+  // init db disini
 
   const app = new App();
   app.start();

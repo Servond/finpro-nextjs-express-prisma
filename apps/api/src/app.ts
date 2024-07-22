@@ -1,21 +1,17 @@
-import express, {
-  json,
-  urlencoded,
-  Express,
-  Request,
-  Response,
-  NextFunction,
-  Router,
-} from 'express';
+import express, { json, urlencoded, Express } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import { SampleRouter } from './routers/sample.router';
+import { UserRouter } from './routers/user.router';
+import { AuthRouter } from './routers/auth.router';
+import { ErrorMiddleware } from './middlewares/error.middleware';
+import { EventRouter } from './routers/event.router';
 
 export default class App {
   private app: Express;
 
   constructor() {
     this.app = express();
+
     this.configure();
     this.routes();
     this.handleError();
@@ -28,36 +24,15 @@ export default class App {
   }
 
   private handleError(): void {
-    // not found
-    this.app.use((req: Request, res: Response, next: NextFunction) => {
-      if (req.path.includes('/api/')) {
-        res.status(404).send('Not found !');
-      } else {
-        next();
-      }
-    });
-
-    // error
-    this.app.use(
-      (err: Error, req: Request, res: Response, next: NextFunction) => {
-        if (req.path.includes('/api/')) {
-          console.error('Error : ', err.stack);
-          res.status(500).send('Error !');
-        } else {
-          next();
-        }
-      },
-    );
+    this.app.use(ErrorMiddleware);
   }
 
   private routes(): void {
-    const sampleRouter = new SampleRouter();
+    const routers = [new UserRouter(), new AuthRouter(), new EventRouter()];
 
-    this.app.get('/api', (req: Request, res: Response) => {
-      res.send(`Hello, Purwadhika Student API!`);
+    routers.forEach((router) => {
+      this.app.use('/api', router.getRouter());
     });
-
-    this.app.use('/api/samples', sampleRouter.getRouter());
   }
 
   public start(): void {
