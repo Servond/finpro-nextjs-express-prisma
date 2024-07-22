@@ -1,99 +1,100 @@
-"use client";
+import React from 'react';
+import { Box, Button, Typography, Stack } from '@mui/material';
 
-import React from "react";
-import { useRouter } from "next/navigation";
-import { Box, Button, Typography, Stack } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import Image from 'next/image';
+import { getSession } from '@/utils/actions/authentication';
+import { NavbarWrapper } from './navbar.style';
+import { signIn, signOut } from '@/auth';
+import { redirect } from 'next/navigation';
 
-import { useAppSelector, useAppDispatch } from "@/lib/hooks";
-import { signOut } from "@/lib/features/auth/authSlice";
-
-import Image from "next/image";
-
-const NavbarWrapper = styled(Box)(() => ({
-  minHeight: "100%",
-  backgroundColor: "rgb(255 255 255)",
-  boxShadow: "0 4px 4px -4px gray",
-}));
-
-const Navbar = () => {
-  const router = useRouter();
-  const { isLogin } = useAppSelector((state) => state.auth.status);
-  const dispatch = useAppDispatch();
+const Navbar = async () => {
+  const user = await getSession();
 
   return (
     <NavbarWrapper>
       <Box
         sx={{
-          margin: "0 200px 0 200px",
-          paddingLeft: "2rem",
-          paddingRight: "2rem",
+          margin: '0 200px 0 200px',
+          paddingLeft: '2rem',
+          paddingRight: '2rem',
         }}
       >
         <Box
           display="flex"
           sx={{
-            height: "4rem",
-            alignItems: "center",
-            justifyContent: "space-between",
+            height: '4rem',
+            alignItems: 'center',
+            justifyContent: 'space-between',
           }}
         >
           <Box
             display="flex"
             sx={{
-              alignItems: "center",
+              alignItems: 'center',
             }}
           >
-          <Image
-              src="/logo.png"
-              alt="Icon"
-              width={60}
-              height={60}
-          />
+            <Image src="/logo.png" alt="Icon" width={60} height={60} />
             <Typography>MProject</Typography>
           </Box>
-          {isLogin == false ? (
+          {!user ? (
             <Stack direction="row" spacing={1}>
-              <Button variant="outlined" onClick={() => router.push("/login")}
-                sx={{
-                  border: 'none',
-                  color: 'black',
-                  '&:hover': {
-                    backgroundColor: "white",
-                    border: 'none'
-                  }
-                }}
-                >
-                Login
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => router.push("/register")}
-                sx={{
-                  border: 'none',
-                  color: 'black',
-                  '&:hover': {
-                    backgroundColor: "rgb(238 46 36)",
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '999px'
-                  }
+              <form
+                action={async () => {
+                  'use server';
+                  await signIn();
                 }}
               >
-                Register
-              </Button>
+                <Button
+                  variant="outlined"
+                  type="submit"
+                  sx={{
+                    border: 'none',
+                    color: 'black',
+                    '&:hover': {
+                      backgroundColor: 'white',
+                      border: 'none',
+                    },
+                  }}
+                >
+                  Login
+                </Button>
+              </form>
+
+              <form
+                action={async () => {
+                  'use server';
+                  redirect('/auth/register');
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  type="submit"
+                  sx={{
+                    border: 'none',
+                    color: 'black',
+                    '&:hover': {
+                      backgroundColor: 'rgb(238 46 36)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '999px',
+                    },
+                  }}
+                >
+                  Register
+                </Button>
+              </form>
             </Stack>
           ) : (
-            <Button
-
-              variant="outlined"
-              onClick={() => {
-                dispatch(signOut());
-                router.push("/");
+            <form
+              action={async () => {
+                'use server';
+                await signOut();
               }}
             >
-              Logout
-            </Button>
+              <Button type="submit" variant="outlined">
+                Logout
+              </Button>
+            </form>
           )}
         </Box>
       </Box>
