@@ -40,8 +40,6 @@ export const RegisterAction = async (values: RegisterFormValues) => {
 			password: hashedPassword,
 		};
 
-		console.log(referral);
-
 		const res = await fetch("http://localhost:8000/api/users", {
 			method: "POST",
 			headers: {
@@ -68,7 +66,6 @@ export const RegisterAction = async (values: RegisterFormValues) => {
 				};
 		}
 	} catch (error) {
-		console.error("Error:", error);
 		return { error: "Something went wrong!" };
 	} finally {
 		redirect("/auth/login");
