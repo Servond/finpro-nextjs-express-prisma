@@ -1,7 +1,7 @@
 import { signIn, signOut } from '@/auth';
 import { getSession } from '@/utils/actions/authentication';
 
-const Page = async () => {
+const DashboardPage = async () => {
   const user = await getSession();
   return (
     <div>
@@ -35,4 +35,4 @@ const Page = async () => {
   );
 };
 
-export default Page;
+export default DashboardPage;
