@@ -31,5 +31,8 @@
     "hooks": {
       "pre-commit": "npx lint-staged"
     }
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.19.3"
   }
 }

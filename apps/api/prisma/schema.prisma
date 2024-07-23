@@ -58,7 +58,7 @@ model Event {
   event_time        DateTime
   event_location    String
   available_seats   Int
-  created_by        Int
+  created_by        String
   created_at        DateTime      @default(now())
   updated_at        DateTime      @updatedAt
   category_id       Int
