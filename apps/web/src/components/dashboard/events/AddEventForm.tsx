@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/form';
 import { createEvent } from '@/utils/actions/events';
 import { DateTimePicker } from '@/components/ui/datetime-picker';
+import { redirect } from 'next/navigation';
 const category = {
   festivals: 'Festivals',
   concerts: 'Concerts',
@@ -46,7 +47,6 @@ export default function AddEventForm({ user_id }: { user_id: number }) {
   const { control, handleSubmit, register } = form;
 
   const onSubmit = (data: Event) => {
-    console.log(data);
     createEvent(JSON.parse(JSON.stringify(data)));
   };
 

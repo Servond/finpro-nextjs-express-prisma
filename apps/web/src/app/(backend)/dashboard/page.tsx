@@ -1,23 +1,13 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { signIn, signOut } from '@/auth';
-import { getSession } from '@/utils/actions/authentication';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getEvents } from '@/utils/actions/events';
 
 const DashboardPage = async () => {
-  const user = await getSession();
+  const events = await getEvents();
   return (
     <div className="flex flex-col justify-center items-start flex-wrap px-4 pt-4 gap-4">
       <Card className="w-[20rem]">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Welcome</CardTitle>
+          <CardTitle className="text-sm font-medium">Event count</CardTitle>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
@@ -32,7 +22,7 @@ const DashboardPage = async () => {
           </svg>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">100</div>
+          <div className="text-2xl font-bold">{events.length}</div>
           <p className="text-xs text-muted-foreground">
             Enter your subtitle here
           </p>
