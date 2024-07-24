@@ -2,7 +2,7 @@ import NextAuth, { CredentialsSignin, NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare, hash } from "bcryptjs";
 
-const nextAuthConfig = {
+export const nextAuthConfig = {
 	providers: [
 		Credentials({
 			name: "Credentials",

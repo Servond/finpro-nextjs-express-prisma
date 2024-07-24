@@ -1,12 +1,17 @@
 import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
 import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import { getSession } from '@/utils/actions/authentication';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await getSession();
+  if (user?.role !== 'organizer') redirect('/');
+
   return (
     <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
       <DashboardSidebar />

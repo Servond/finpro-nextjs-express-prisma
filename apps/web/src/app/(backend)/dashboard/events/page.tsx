@@ -8,7 +8,6 @@ import Link from 'next/link';
 
 export default async function EventsPage() {
   const data = await getEvents();
-  console.log('Data: ', data);
   return (
     <div className="container mx-auto py-10">
       <div className="flex items-center justify-between mb-6 flex-col sm:flex-row">
