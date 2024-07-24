@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Event } from '@/types/event.types';
+import { deleteEvent } from '@/utils/actions/events';
 import { ColumnDef } from '@tanstack/react-table';
 import Link from 'next/link';
 
@@ -45,7 +46,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <Link href={`/dashboard/events/${row.original.event_id}`}>
+          <Link href={`/events/${row.original.event_id}`}>
             <Button size="sm" variant="outline">
               View
             </Button>
@@ -55,11 +56,17 @@ export const columns: ColumnDef<Event>[] = [
               Edit
             </Button>
           </Link>
-          <Link href={`/dashboard/events/${row.original.event_id}/delete`}>
-            <Button size="sm" variant="destructive">
-              Delete
-            </Button>
-          </Link>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() =>
+              deleteEvent(row.original.event_id as number).then(() => {
+                window.location.reload();
+              })
+            }
+          >
+            Delete
+          </Button>
         </div>
       );
     },

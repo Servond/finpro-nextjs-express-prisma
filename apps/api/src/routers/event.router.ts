@@ -26,6 +26,11 @@ export class EventRouter {
 			"/",
 			this.eventController.createEvent.bind(this.eventController),
 		);
+
+		this.router.delete(
+			"/:event_id",
+			this.eventController.deleteEvent.bind(this.eventController),
+		);
 	}
 
 	getRouter(): Router {

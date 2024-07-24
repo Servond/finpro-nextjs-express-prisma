@@ -58,6 +58,7 @@ model Event {
   event_category    String
   event_location    String
   available_seats   Int
+  total_seats       Int
   created_by        Int
   created_at        DateTime    @default(now())
   updated_at        DateTime    @updatedAt

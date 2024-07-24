@@ -16,6 +16,7 @@ export const eventSchema = z.object({
 	available_seats: z.coerce
 		.number()
 		.min(1, "Available seats must be at least 1"),
+	total_seats: z.coerce.number().min(1, "Total seats must be at least 1"),
 	created_by: z.coerce.number(),
 	created_at: z.string().nullable().optional(),
 	updated_at: z.string().nullable().optional(),

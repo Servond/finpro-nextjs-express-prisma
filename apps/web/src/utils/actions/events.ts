@@ -39,3 +39,13 @@ export async function createEvent(data: Event) {
 		redirect("/dashboard/events");
 	}
 }
+
+export async function deleteEvent(event_id: number) {
+	const res = await fetch(`http://localhost:8000/api/events/${event_id}`, {
+		method: "DELETE",
+	});
+
+	if (!res.ok) throw new Error("Failed to delete event");
+
+	return res.json();
+}

@@ -38,6 +38,7 @@ export class EventController {
 				event_category,
 				event_location,
 				available_seats,
+				total_seats,
 				created_by,
 			} = req.body;
 
@@ -49,6 +50,7 @@ export class EventController {
 					event_category,
 					event_location,
 					available_seats,
+					total_seats,
 					created_by,
 				},
 			});
@@ -56,6 +58,20 @@ export class EventController {
 			return res.status(201).send(event);
 		} catch (error) {
 			return res.status(500).send({ error: "Failed to add event" });
+		}
+	}
+
+	async deleteEvent(req: Request, res: Response) {
+		try {
+			const { event_id } = req.params;
+
+			const event = await prisma.event.delete({
+				where: { event_id: Number(event_id) },
+			});
+
+			return res.status(200).send(event);
+		} catch (error) {
+			return res.status(500).send({ error: "Failed to delete event" });
 		}
 	}
 }

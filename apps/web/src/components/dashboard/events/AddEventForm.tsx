@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/form';
 import { createEvent } from '@/utils/actions/events';
 import { DateTimePicker } from '@/components/ui/datetime-picker';
-import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
 const category = {
   festivals: 'Festivals',
   concerts: 'Concerts',
@@ -42,9 +42,18 @@ const category = {
 export default function AddEventForm({ user_id }: { user_id: number }) {
   const form = useForm<Event>({
     resolver: zodResolver(eventSchema),
+    defaultValues: {
+      created_by: user_id,
+    },
   });
 
-  const { control, handleSubmit, register } = form;
+  console.log(form.formState.errors);
+
+  const { control, handleSubmit, register, watch, setValue } = form;
+
+  useEffect(() => {
+    setValue('available_seats', form.watch('total_seats'));
+  }, [form.watch('total_seats'), setValue]);
 
   const onSubmit = (data: Event) => {
     createEvent(JSON.parse(JSON.stringify(data)));
@@ -55,15 +64,6 @@ export default function AddEventForm({ user_id }: { user_id: number }) {
       <h1 className="text-2xl font-bold mb-4">Add New Event</h1>
       <Form {...form}>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-          <input
-            type="hidden"
-            {...register('created_by', {
-              value: user_id,
-            })}
-            defaultValue={user_id}
-            readOnly
-          />
-
           <FormField
             control={control}
             name="event_name"
@@ -135,21 +135,33 @@ export default function AddEventForm({ user_id }: { user_id: number }) {
 
           <FormField
             control={control}
-            name="available_seats"
+            name="total_seats"
             render={({ field }) => (
               <div className="space-y-1">
-                <FormLabel htmlFor="seats">Available Seats</FormLabel>
+                <FormLabel htmlFor="total_seats">Total Seats</FormLabel>
                 <FormControl>
                   <Input
-                    id="seats"
+                    id="total_seats"
                     type="number"
                     placeholder="Enter number of seats"
                     {...field}
                   />
                 </FormControl>
+
                 <FormMessage />
               </div>
             )}
+          />
+
+          <input
+            type="hidden"
+            {...register('available_seats')}
+            value={
+              watch('total_seats')
+                ? watch('total_seats')
+                : form.getValues().total_seats
+            }
+            readOnly
           />
 
           <FormField
