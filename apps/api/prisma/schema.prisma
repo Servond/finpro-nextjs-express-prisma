@@ -51,24 +51,21 @@ model Points {
 }
 
 model Event {
-  event_id          Int           @id @default(autoincrement())
+  event_id          Int         @id @default(autoincrement())
   event_name        String
   event_description String
   event_date        DateTime
-  event_time        DateTime
+  event_category    String
   event_location    String
   available_seats   Int
-  created_by        String
-  created_at        DateTime      @default(now())
-  updated_at        DateTime      @updatedAt
-  category_id       Int
-  category          EventCategory @relation(fields: [category_id], references: [category_id])
-  creator           User          @relation("EventCreatedBy", fields: [created_by], references: [user_id])
+  created_by        Int
+  created_at        DateTime    @default(now())
+  updated_at        DateTime    @updatedAt
+  creator           User        @relation("EventCreatedBy", fields: [created_by], references: [user_id])
   promotions        Promotion[]
   ratings           Rating[]
   tickets           Ticket[]
 
-  @@index([category_id])
   @@index([created_by], map: "Event_created_by_fkey")
 }
 
@@ -84,13 +81,6 @@ model Ticket {
   transactions Transaction[]
 
   @@index([event_id], map: "Ticket_event_id_fkey")
-}
-
-model EventCategory {
-  category_id   Int     @id @default(autoincrement())
-  category_name String
-  description   String
-  events        Event[]
 }
 
 model Payment {

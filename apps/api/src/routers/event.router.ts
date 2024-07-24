@@ -21,6 +21,11 @@ export class EventRouter {
 			"/:event_id",
 			this.eventController.getEventById.bind(this.eventController),
 		);
+
+		this.router.post(
+			"/",
+			this.eventController.createEvent.bind(this.eventController),
+		);
 	}
 
 	getRouter(): Router {

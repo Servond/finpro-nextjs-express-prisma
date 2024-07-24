@@ -40,6 +40,7 @@ export default function RegisterForm() {
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
   });
+  console.log(form.formState.errors);
 
   const { control, handleSubmit } = form;
 

@@ -15,6 +15,7 @@ export const userSchema = z.object({
 	role: z.enum(["participant", "organizer"]),
 	created_at: z.string().nullable().optional(),
 	updated_at: z.string().nullable().optional(),
+	id: z.string().nullable().optional(),
 });
 
 export type User = z.infer<typeof userSchema>;

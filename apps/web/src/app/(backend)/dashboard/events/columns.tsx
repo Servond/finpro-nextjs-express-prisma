@@ -1,7 +1,9 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { Event } from '@/types/event.types';
 import { ColumnDef } from '@tanstack/react-table';
+import Link from 'next/link';
 
 export const columns: ColumnDef<Event>[] = [
   {
@@ -11,10 +13,23 @@ export const columns: ColumnDef<Event>[] = [
   {
     accessorKey: 'event_date',
     header: 'Date',
+    cell: ({ row }) => {
+      return new Date(row.original.event_date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    },
   },
   {
     accessorKey: 'event_time',
     header: 'Time',
+    cell: ({ row }) => {
+      return new Date(row.original.event_date).toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+      });
+    },
   },
   {
     accessorKey: 'event_location',
@@ -23,5 +38,30 @@ export const columns: ColumnDef<Event>[] = [
   {
     accessorKey: 'available_seats',
     header: 'Available Seats',
+  },
+  {
+    accessorKey: 'actions',
+    header: 'Actions',
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center space-x-2">
+          <Link href={`/dashboard/events/${row.original.event_id}`}>
+            <Button size="sm" variant="outline">
+              View
+            </Button>
+          </Link>
+          <Link href={`/dashboard/events/${row.original.event_id}/edit`}>
+            <Button size="sm" variant="outline">
+              Edit
+            </Button>
+          </Link>
+          <Link href={`/dashboard/events/${row.original.event_id}/delete`}>
+            <Button size="sm" variant="destructive">
+              Delete
+            </Button>
+          </Link>
+        </div>
+      );
+    },
   },
 ];

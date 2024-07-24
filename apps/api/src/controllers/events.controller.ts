@@ -28,4 +28,34 @@ export class EventController {
 			return res.status(500).send({ error: "Failed to fetch event" });
 		}
 	}
+
+	async createEvent(req: Request, res: Response) {
+		try {
+			const {
+				event_name,
+				event_description,
+				event_date,
+				event_category,
+				event_location,
+				available_seats,
+				created_by,
+			} = req.body;
+
+			const event = await prisma.event.create({
+				data: {
+					event_name,
+					event_description,
+					event_date,
+					event_category,
+					event_location,
+					available_seats,
+					created_by,
+				},
+			});
+
+			return res.status(201).send(event);
+		} catch (error) {
+			return res.status(500).send({ error: "Failed to add event" });
+		}
+	}
 }
