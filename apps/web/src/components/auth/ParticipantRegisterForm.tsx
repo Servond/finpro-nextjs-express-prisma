@@ -9,13 +9,6 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { userSchema } from '@/types/user.types';
@@ -31,21 +24,30 @@ import Link from 'next/link';
 import { RegisterAction } from '@/utils/actions/authentication';
 import { z } from 'zod';
 
-const registerFormSchema = userSchema.extend({
-  referral: z.string().nullable().optional(),
-});
+const registerFormSchema = userSchema
+  .extend({
+    referral: z.string().nullable().optional(),
+    confirmPassword: z.string().min(8),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  });
+
 export type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
-export default function RegisterForm() {
+export default function ParticipantRegisterForm() {
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerFormSchema),
+    defaultValues: {
+      role: 'participant',
+    },
   });
-  console.log(form.formState.errors);
 
   const { control, handleSubmit } = form;
 
   const onSubmit = (data: RegisterFormValues) => {
-    RegisterAction(JSON.parse(JSON.stringify(data)));
+    RegisterAction(data);
   };
 
   return (
@@ -53,13 +55,15 @@ export default function RegisterForm() {
       <form className="w-full max-w-md" onSubmit={handleSubmit(onSubmit)}>
         <Card className="w-full max-w-md space-y-4">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl">Register</CardTitle>
+            <CardTitle className="text-2xl">
+              Register as a Participant
+            </CardTitle>
             <CardDescription>
               Enter your details to create an account
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={control}
                 name="full_name"
@@ -77,16 +81,19 @@ export default function RegisterForm() {
                   </div>
                 )}
               />
+            </div>
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={control}
-                name="username"
+                name="email"
                 render={({ field }) => (
                   <div className="space-y-2">
-                    <FormLabel htmlFor="username">Username</FormLabel>
+                    <FormLabel htmlFor="email">Email</FormLabel>
                     <FormControl>
                       <Input
-                        id="username"
-                        placeholder="Enter your username"
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
                         {...field}
                       />
                     </FormControl>
@@ -114,45 +121,35 @@ export default function RegisterForm() {
                   </div>
                 )}
               />
-
               <FormField
                 control={control}
-                name="email"
+                name="confirmPassword"
                 render={({ field }) => (
                   <div className="space-y-2">
-                    <FormLabel htmlFor="email">Email</FormLabel>
+                    <FormLabel htmlFor="confirmPassword">
+                      Confirm Password
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="Confirm your password"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    {
+                      // @ts-ignore
+                      form.formState.errors.confirmPassword && (
+                        <FormMessage>
+                          {form.formState.errors.confirmPassword.message}
+                        </FormMessage>
+                      )
+                    }
                   </div>
                 )}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={control}
-                name="phone_number"
-                render={({ field }) => (
-                  <div className="space-y-2">
-                    <FormLabel htmlFor="phone">Phone Number</FormLabel>
-                    <FormControl>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </div>
-                )}
-              />
+            <div className="grid grid-cols-1 gap-4">
               <FormField
                 control={control}
                 name="referral"
@@ -175,43 +172,7 @@ export default function RegisterForm() {
                 )}
               />
             </div>
-            <FormField
-              control={control}
-              name="role"
-              render={({ field }) => (
-                <div className="space-y-2">
-                  <FormLabel htmlFor="role">Role</FormLabel>
-                  <FormControl>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      {...field}
-                    >
-                      <SelectTrigger id="role">
-                        <SelectValue placeholder="Select your role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem
-                          value="participant"
-                          className="hover:cursor-pointer"
-                        >
-                          Participant
-                        </SelectItem>
-                        <SelectItem
-                          value="organizer"
-                          className="hover:cursor-pointer"
-                        >
-                          Organizer
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </div>
-              )}
-            />
           </CardContent>
-
           <CardFooter>
             <div className="flex flex-col gap-2 w-full">
               <div className="w-full">

@@ -1,4 +1,6 @@
-import RegisterForm from '@/components/auth/RegisterForm';
+import OrganizerRegisterForm from '@/components/auth/OrganizerRegisterForm';
+import ParticipantRegisterForm from '@/components/auth/ParticipantRegisterForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Image from 'next/image';
 
 const RegisterPage = async () => {
@@ -14,7 +16,18 @@ const RegisterPage = async () => {
         />
       </div>
       <div className="flex items-center justify-center px-4 py-12 md:px-6">
-        <RegisterForm />
+        <Tabs defaultValue="participant">
+          <TabsList className="grid grid-cols-2 w-full">
+            <TabsTrigger value="participant">Participant</TabsTrigger>
+            <TabsTrigger value="organizer">Organizer</TabsTrigger>
+          </TabsList>
+          <TabsContent value="participant">
+            <ParticipantRegisterForm />
+          </TabsContent>
+          <TabsContent value="organizer">
+            <OrganizerRegisterForm />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
