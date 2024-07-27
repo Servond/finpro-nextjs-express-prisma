@@ -22,6 +22,7 @@ import {
 import Link from 'next/link';
 import { z } from 'zod';
 import { LoginAction } from '@/utils/actions/authentication';
+import { toast } from 'sonner';
 
 export const loginFormSchema = z.object({
   email: z.string().email(),
@@ -36,8 +37,20 @@ export default function LoginForm() {
   });
 
   const { control, handleSubmit } = form;
-  const onSubmit = (data: LoginFormValues) => {
-    LoginAction(JSON.parse(JSON.stringify(data)));
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const response = LoginAction(JSON.parse(JSON.stringify(data)));
+
+      toast.promise(response, {
+        loading: 'Logging in...',
+        success: 'Login successful',
+        error: 'Login failed',
+      });
+
+      await response;
+    } catch (error) {
+      return error;
+    }
   };
 
   return (

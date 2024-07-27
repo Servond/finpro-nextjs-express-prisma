@@ -23,6 +23,7 @@ import {
 import Link from 'next/link';
 import { RegisterAction } from '@/utils/actions/authentication';
 import { z } from 'zod';
+import { toast } from 'sonner';
 
 const registerFormSchema = userSchema
   .extend({
@@ -46,8 +47,23 @@ export default function ParticipantRegisterForm() {
 
   const { control, handleSubmit } = form;
 
-  const onSubmit = (data: RegisterFormValues) => {
-    RegisterAction(data);
+  const onSubmit = async (data: RegisterFormValues) => {
+    try {
+      const response = RegisterAction(data);
+
+      toast.promise(response, {
+        loading: 'Registering...',
+        success: 'Registration successful',
+        error: 'Registration failed',
+      });
+
+      await response;
+      form.reset();
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
   };
 
   return (
