@@ -6,6 +6,7 @@ import { getSession } from '@/utils/actions/authentication';
 import { NavbarWrapper } from './navbar.style';
 import { signIn, signOut } from '@/auth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 const Navbar = async () => {
   const user = await getSession();
@@ -85,16 +86,21 @@ const Navbar = async () => {
               </form>
             </Stack>
           ) : (
-            <form
-              action={async () => {
-                'use server';
-                await signOut();
-              }}
-            >
-              <Button type="submit" variant="outlined">
-                Logout
-              </Button>
-            </form>
+            <div className="flex gap-4">
+              <form
+                action={async () => {
+                  'use server';
+                  await signOut();
+                }}
+              >
+                <Button type="submit" variant="outlined">
+                  Logout
+                </Button>
+              </form>
+              <Link href="/dashboard">
+                <Button variant="outlined">Dashboard</Button>
+              </Link>
+            </div>
           )}
         </Box>
       </Box>

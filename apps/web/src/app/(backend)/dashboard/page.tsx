@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getEvents } from '@/utils/actions/events';
+import { getUsers } from '@/utils/actions/users';
 
 const DashboardPage = async () => {
   const events = await getEvents();

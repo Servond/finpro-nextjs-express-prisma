@@ -12,10 +12,10 @@ export const columns: ColumnDef<Event>[] = [
     header: 'Name',
   },
   {
-    accessorKey: 'event_date',
-    header: 'Date',
+    accessorKey: 'start_date',
+    header: 'Start Date',
     cell: ({ row }) => {
-      return new Date(row.original.event_date).toLocaleDateString('en-US', {
+      return new Date(row.original.start_date).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -23,12 +23,13 @@ export const columns: ColumnDef<Event>[] = [
     },
   },
   {
-    accessorKey: 'event_time',
-    header: 'Time',
+    accessorKey: 'end_date',
+    header: 'End Date',
     cell: ({ row }) => {
-      return new Date(row.original.event_date).toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: 'numeric',
+      return new Date(row.original.end_date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       });
     },
   },
@@ -39,6 +40,11 @@ export const columns: ColumnDef<Event>[] = [
   {
     accessorKey: 'available_seats',
     header: 'Available Seats',
+    cell: ({ row }) => {
+      return row.original.available_seats === 0
+        ? 'Sold Out'
+        : `${row.original.available_seats}/${row.original.total_seats}`;
+    },
   },
   {
     accessorKey: 'actions',

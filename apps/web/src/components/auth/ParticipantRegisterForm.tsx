@@ -153,14 +153,11 @@ export default function ParticipantRegisterForm() {
                         {...field}
                       />
                     </FormControl>
-                    {
-                      // @ts-ignore
-                      form.formState.errors.confirmPassword && (
-                        <FormMessage>
-                          {form.formState.errors.confirmPassword.message}
-                        </FormMessage>
-                      )
-                    }
+                    {form.formState.errors.confirmPassword && (
+                      <FormMessage>
+                        {form.formState.errors.confirmPassword.message}
+                      </FormMessage>
+                    )}
                   </div>
                 )}
               />

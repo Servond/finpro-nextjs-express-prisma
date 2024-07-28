@@ -20,6 +20,7 @@ model User {
   referrals    Referral[]    @relation("ReferralUser")
   transactions Transaction[]
   points       Points[]      @relation("UserPoints")
+  Ticket       Ticket[]
 }
 
 model Referral {
@@ -51,12 +52,15 @@ model Points {
 model Event {
   event_id          Int         @id @default(autoincrement())
   event_name        String
-  event_description String
-  event_date        DateTime
+  event_description String      @db.Text
+  start_date        DateTime
+  end_date          DateTime
   event_category    String
   event_location    String
   available_seats   Int
   total_seats       Int
+  ticket_limit      Int
+  ticket_price      Int
   created_by        Int
   created_at        DateTime    @default(now())
   updated_at        DateTime    @updatedAt
@@ -70,13 +74,14 @@ model Event {
 
 model Ticket {
   ticket_id    Int           @id @default(autoincrement())
+  user_id      Int
   event_id     Int
-  ticket_type  String
   price        Float
   quantity     Int
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   event        Event         @relation(fields: [event_id], references: [event_id])
+  user         User          @relation(fields: [user_id], references: [user_id])
   transactions Transaction[]
 
   @@index([event_id], map: "Ticket_event_id_fkey")

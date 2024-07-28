@@ -31,6 +31,26 @@ export class EventRouter {
 			"/:event_id",
 			this.eventController.deleteEvent.bind(this.eventController),
 		);
+
+		this.router.get(
+			"/tickets",
+			this.eventController.getTickets.bind(this.eventController),
+		);
+
+		this.router.get(
+			"/:event_id/tickets",
+			this.eventController.getTicketByEventId.bind(this.eventController),
+		);
+
+		this.router.get(
+			"/:event_id/tickets/:user_id",
+			this.eventController.getTicketByUserAndEventId.bind(this.eventController),
+		);
+
+		this.router.post(
+			"/tickets",
+			this.eventController.createTicket.bind(this.eventController),
+		);
 	}
 
 	getRouter(): Router {

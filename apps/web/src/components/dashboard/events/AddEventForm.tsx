@@ -22,6 +22,7 @@ import {
 import { createEvent } from '@/utils/actions/events';
 import { DateTimePicker } from '@/components/ui/datetime-picker';
 import { useEffect } from 'react';
+
 const category = {
   festivals: 'Festivals',
   concerts: 'Concerts',
@@ -44,6 +45,7 @@ export default function AddEventForm({ user_id }: { user_id: number }) {
     resolver: zodResolver(eventSchema),
     defaultValues: {
       created_by: user_id,
+      ticket_price: 0,
     },
   });
 
@@ -97,13 +99,13 @@ export default function AddEventForm({ user_id }: { user_id: number }) {
             )}
           />
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-2 w-full">
             <FormField
               control={control}
-              name="event_date"
+              name="start_date"
               render={({ field }) => (
                 <div className="space-y-1">
-                  <FormLabel htmlFor="date">Event Date &amp; Time</FormLabel>
+                  <FormLabel htmlFor="date">Start Date &amp; Time</FormLabel>
                   <FormControl>
                     <DateTimePicker
                       placeholder="Select event date & time"
@@ -111,6 +113,27 @@ export default function AddEventForm({ user_id }: { user_id: number }) {
                     />
                   </FormControl>
                   <FormMessage />
+                </div>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="end_date"
+              render={({ field }) => (
+                <div className="space-y-1">
+                  <FormLabel htmlFor="date">End Date &amp; Time</FormLabel>
+                  <FormControl>
+                    <DateTimePicker
+                      placeholder="Select event date & time"
+                      {...field}
+                    />
+                  </FormControl>
+                  {form.formState.errors.end_date && (
+                    <FormMessage>
+                      {form.formState.errors.end_date.message}
+                    </FormMessage>
+                  )}
                 </div>
               )}
             />
@@ -131,37 +154,6 @@ export default function AddEventForm({ user_id }: { user_id: number }) {
                 <FormMessage />
               </div>
             )}
-          />
-
-          <FormField
-            control={control}
-            name="total_seats"
-            render={({ field }) => (
-              <div className="space-y-1">
-                <FormLabel htmlFor="total_seats">Total Seats</FormLabel>
-                <FormControl>
-                  <Input
-                    id="total_seats"
-                    type="number"
-                    placeholder="Enter number of seats"
-                    {...field}
-                  />
-                </FormControl>
-
-                <FormMessage />
-              </div>
-            )}
-          />
-
-          <input
-            type="hidden"
-            {...register('available_seats')}
-            value={
-              watch('total_seats')
-                ? watch('total_seats')
-                : form.getValues().total_seats
-            }
-            readOnly
           />
 
           <FormField
@@ -189,6 +181,75 @@ export default function AddEventForm({ user_id }: { user_id: number }) {
                 </Select>
               </div>
             )}
+          />
+
+          <FormField
+            control={control}
+            name="total_seats"
+            render={({ field }) => (
+              <div className="space-y-1">
+                <FormLabel htmlFor="total_seats">Total Seats</FormLabel>
+                <FormControl>
+                  <Input
+                    id="total_seats"
+                    type="number"
+                    placeholder="Enter number of seats"
+                    {...field}
+                  />
+                </FormControl>
+
+                <FormMessage />
+              </div>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="ticket_limit"
+            render={({ field }) => (
+              <div className="space-y-1">
+                <FormLabel htmlFor="ticket_limit">Ticket Limit</FormLabel>
+                <FormControl>
+                  <Input
+                    id="ticket_limit"
+                    type="number"
+                    placeholder="Enter ticket limit to limit tickets per user"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </div>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="ticket_price"
+            render={({ field }) => (
+              <div className="space-y-1">
+                <FormLabel htmlFor="ticket_limit">Ticket Price</FormLabel>
+                <FormControl>
+                  <Input
+                    id="ticket_price"
+                    type="number"
+                    placeholder="Enter ticket price"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </div>
+            )}
+          />
+
+          <input
+            type="hidden"
+            {...register('available_seats')}
+            value={
+              watch('total_seats')
+                ? watch('total_seats')
+                : form.getValues().total_seats
+            }
+            readOnly
           />
 
           <Button type="submit" className="w-full">

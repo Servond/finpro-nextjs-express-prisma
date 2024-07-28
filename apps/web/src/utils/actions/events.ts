@@ -13,7 +13,9 @@ export async function getEvents() {
 }
 
 export async function getEventById(event_id: number) {
-	const res = await fetch(`http://localhost:8000/api/events/${event_id}`);
+	const res = await fetch(`http://localhost:8000/api/events/${event_id}`, {
+		cache: "no-cache",
+	});
 
 	if (!res.ok) throw new Error("Failed to fetch event");
 
