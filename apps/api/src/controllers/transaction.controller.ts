@@ -27,12 +27,14 @@ export class TransactionController {
 
 	async createTransaction(req: Request, res: Response) {
 		try {
-			const { user_id, event_id, quantity, total_amount } = req.body;
+			const { user_id, event_id, event_name, quantity, total_amount } =
+				req.body;
 
 			const newTransaction = await prisma.transaction.create({
 				data: {
 					user_id: Number(user_id),
 					event_id: Number(event_id),
+					event_name: event_name,
 					quantity: Number(quantity),
 					total_amount: Number(total_amount),
 					transaction_status: "PENDING",

@@ -3,11 +3,12 @@
 import { Button } from '@/components/ui/button';
 import { Transaction } from '@/types/transaction.types';
 import { ColumnDef } from '@tanstack/react-table';
+import clsx from 'clsx';
 import Link from 'next/link';
 
 export const columns: ColumnDef<Transaction>[] = [
   {
-    accessorKey: 'event_id',
+    accessorKey: 'event_name',
     header: 'Event Name',
   },
   {
@@ -20,6 +21,22 @@ export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'transaction_status',
     header: 'Payment Status',
+    cell: ({ row }) => {
+      return (
+        <span
+          className={clsx(
+            'px-2 py-1 rounded-full',
+            row.original.transaction_status === 'PENDING'
+              ? 'bg-yellow-100 text-yellow-800'
+              : row.original.transaction_status === 'SUCCESS'
+                ? 'bg-green-100 text-green-800'
+                : 'bg-red-100 text-red-800',
+          )}
+        >
+          {row.original.transaction_status}
+        </span>
+      );
+    },
   },
   {
     accessorKey: 'transaction_date',
