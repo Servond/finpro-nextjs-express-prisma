@@ -3,14 +3,15 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
   user_id      Int           @id @default(autoincrement())
   password     String
-  email        String
+  email        String        @unique
   full_name    String
   role         Role
   created_at   DateTime      @default(now())
@@ -32,7 +33,7 @@ model Referral {
   user          User     @relation("ReferralUser", fields: [referrer_id], references: [user_id])
   points        Points[] @relation("ReferralPoints")
 
-  @@index([referrer_id], map: "Referral_referrer_id_fkey")
+  @@index([referrer_id])
 }
 
 model Points {
@@ -45,14 +46,14 @@ model Points {
   user        User     @relation("UserPoints", fields: [user_id], references: [user_id])
   referral    Referral @relation("ReferralPoints", fields: [referral_id], references: [referral_id])
 
-  @@index([user_id], map: "Points_user_id_fkey")
-  @@index([referral_id], map: "Points_referral_id_fkey")
+  @@index([user_id])
+  @@index([referral_id])
 }
 
 model Event {
   event_id          Int         @id @default(autoincrement())
   event_name        String
-  event_description String      @db.Text
+  event_description String
   start_date        DateTime
   end_date          DateTime
   event_category    String
@@ -69,7 +70,7 @@ model Event {
   ratings           Rating[]
   tickets           Ticket[]
 
-  @@index([created_by], map: "Event_created_by_fkey")
+  @@index([created_by])
 }
 
 model Ticket {
@@ -84,7 +85,8 @@ model Ticket {
   user         User          @relation(fields: [user_id], references: [user_id])
   transactions Transaction[]
 
-  @@index([event_id], map: "Ticket_event_id_fkey")
+  @@index([event_id])
+  @@index([user_id])
 }
 
 model Payment {
@@ -105,8 +107,8 @@ model Rating {
   event      Event    @relation(fields: [event_id], references: [event_id])
   user       User     @relation(fields: [user_id], references: [user_id])
 
-  @@index([event_id], map: "Rating_event_id_fkey")
-  @@index([user_id], map: "Rating_user_id_fkey")
+  @@index([event_id])
+  @@index([user_id])
 }
 
 model Promotion {
@@ -120,7 +122,7 @@ model Promotion {
   updated_at          DateTime @updatedAt
   event               Event    @relation(fields: [event_id], references: [event_id])
 
-  @@index([event_id], map: "Promotion_event_id_fkey")
+  @@index([event_id])
 }
 
 model Transaction {
@@ -137,9 +139,9 @@ model Transaction {
   ticket           Ticket   @relation(fields: [ticket_id], references: [ticket_id])
   user             User     @relation(fields: [user_id], references: [user_id])
 
-  @@index([user_id], map: "Transaction_user_id_fkey")
-  @@index([ticket_id], map: "Transaction_ticket_id_fkey")
-  @@index([payment_id], map: "Transaction_payment_id_fkey")
+  @@index([user_id])
+  @@index([ticket_id])
+  @@index([payment_id])
 }
 
 enum Role {
