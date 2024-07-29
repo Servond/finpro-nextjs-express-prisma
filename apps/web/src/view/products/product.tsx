@@ -6,29 +6,29 @@ import { Box, Container, Typography, Grid, Card, CardMedia, CardContent, CardAct
 const products = [
   {
     id: 1,
-    title: "Product 1",
-    description: "This is the details or description for product 1",
+    title: "Jakarta",
+    description: "The chocolate cake is absolutely delicious!",
     image: "/1.png",
     price: "IDR 100"
   },
   {
     id: 2,
-    title: "Product 2",
-    description: "This is the details or description for product 2",
+    title: "Bogor",
+    description: "Her poetry beautifully captures life's essence.",
     image: "/2.png",
     price: "IDR 200"
   },
   {
     id: 3,
-    title: "Product 3",
-    description: "This is the details or description for product 3",
+    title: "Bekasi",
+    description: "They decided to run through the park.",
     image: "/3.png",
-    price: "IDR 300"
+    price: "FREE"
   },
   {
     id: 4,
-    title: "Product 4",
-    description: "This is the details or description for product 4",
+    title: "Tangerang",
+    description: "She bought the dress online last night.",
     image: "/4.png",
     price: "IDR 400"
   }
@@ -54,13 +54,13 @@ const ProductView = () => {
                     title={product.title}
                   />
                   <CardContent>
-                    <Typography gutterBottom component="div" sx={{ fontSize: "18px" }}>
-                      {product.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography color="text.secondary" sx={{ fontSize: "14px", fontWeight: 100 }}>
                       {product.description}
                     </Typography>
-                    <Typography sx={{ textAlign: "right", marginTop: "1rem", fontSize: "18px" }}>
+                    <Typography gutterBottom component="div" sx={{ fontSize: "14px", fontWeight: 600 }}>
+                      {product.title}
+                    </Typography>
+                    <Typography sx={{ textAlign: "right", marginTop: "1rem", fontSize: "14px", fontWeight: 600 }}>
                       {product.price}
                     </Typography>
                   </CardContent>
