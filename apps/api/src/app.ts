@@ -12,6 +12,7 @@ import { PORT } from "./config";
 import { UserRouter } from "./routers/user.router";
 import { ReferralRouter } from "./routers/referral.router";
 import { PointsRouter } from "./routers/points.router";
+import { EventRouter } from "./routers/event.router";
 
 export default class App {
 	private app: Express;
@@ -56,6 +57,7 @@ export default class App {
 		const userRouter = new UserRouter();
 		const referralRouter = new ReferralRouter();
 		const pointRouter = new PointsRouter();
+		const eventRouter = new EventRouter();
 
 		this.app.get("/api", (req: Request, res: Response) => {
 			res.send(`Hello, Purwadhika Student API!`);
@@ -64,6 +66,7 @@ export default class App {
 		this.app.use("/api/users", userRouter.getRouter());
 		this.app.use("/api/referrals", referralRouter.getRouter());
 		this.app.use("/api/points", pointRouter.getRouter());
+		this.app.use("/api/events", eventRouter.getRouter());
 	}
 
 	public start(): void {

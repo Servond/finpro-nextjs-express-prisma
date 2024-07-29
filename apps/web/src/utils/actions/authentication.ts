@@ -5,7 +5,7 @@ import { AuthError } from "next-auth";
 import { User } from "@/types/user.types";
 import { hash } from "bcryptjs";
 import { redirect } from "next/navigation";
-import { RegisterFormValues } from "@/components/auth/RegisterForm";
+import { RegisterFormValues } from "@/components/auth/OrganizerRegisterForm";
 
 export const LoginAction = async (data: LoginFormValues) => {
 	const credentialsData = {

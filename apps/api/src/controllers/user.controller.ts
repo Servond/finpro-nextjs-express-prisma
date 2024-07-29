@@ -72,12 +72,11 @@ export class UserController {
 
 	async createUser(req: Request, res: Response) {
 		try {
-			const { username, password, email, full_name, phone_number, role } =
-				req.body;
+			const { password, email, full_name, role } = req.body;
 
 			const newUser = await prisma.$transaction(async (prisma) => {
 				const user = await prisma.user.create({
-					data: { username, password, email, full_name, phone_number, role },
+					data: { password, email, full_name, role },
 				});
 
 				const referralCode = await generateUniqueReferralCode();
@@ -85,15 +84,19 @@ export class UserController {
 					new Date().setMonth(new Date().getMonth() + 3),
 				);
 
-				const referral = await prisma.referral.create({
-					data: {
-						referral_code: referralCode as string,
-						referrer_id: user.user_id,
-						expires_at: expirationDate,
-					},
-				});
+				if (role === "participant") {
+					const referral = await prisma.referral.create({
+						data: {
+							referral_code: referralCode as string,
+							referrer_id: user.user_id,
+							expires_at: expirationDate,
+						},
+					});
 
-				return { user, referral };
+					return { user, referral };
+				}
+
+				return user;
 			});
 
 			return res.status(201).send(newUser);

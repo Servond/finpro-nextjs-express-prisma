@@ -6,6 +6,7 @@ import { getSession } from '@/utils/actions/authentication';
 import { NavbarWrapper } from './navbar.style';
 import { signIn, signOut } from '@/auth';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 const Navbar = async () => {
   const user = await getSession();
@@ -38,39 +39,6 @@ const Navbar = async () => {
           </Box>
           {!user ? (
             <Stack direction="row" spacing={1}>
-<<<<<<< HEAD
-              <Button variant="outlined" onClick={() => router.push("/login")}
-                sx={{
-                  border: 'none',
-                  color: 'black',
-                  '&:hover': {
-                    backgroundColor: "white",
-                    border: 'none',
-                    color: 'rgb(238 46 36)'
-                  }
-                }}
-                >
-                Login
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={() => router.push("/register")}
-                sx={{
-                  border: 'none',
-                  color: 'black',
-                  borderRadius: '999px',
-                  transition: 'background-color 0.3s, color 0.3s',
-                  '&:hover': {
-                    backgroundColor: "rgb(238 46 36)",
-                    color: 'white',
-                    border: 'none', 
-                    borderRadius: '999px'
-                  }
-                }}
-                >
-                Register
-              </Button>
-=======
               <form
                 action={async () => {
                   'use server';
@@ -116,19 +84,23 @@ const Navbar = async () => {
                   Register
                 </Button>
               </form>
->>>>>>> main
             </Stack>
           ) : (
-            <form
-              action={async () => {
-                'use server';
-                await signOut();
-              }}
-            >
-              <Button type="submit" variant="outlined">
-                Logout
-              </Button>
-            </form>
+            <div className="flex gap-4">
+              <form
+                action={async () => {
+                  'use server';
+                  await signOut();
+                }}
+              >
+                <Button type="submit" variant="outlined">
+                  Logout
+                </Button>
+              </form>
+              <Link href="/dashboard">
+                <Button variant="outlined">Dashboard</Button>
+              </Link>
+            </div>
           )}
         </Box>
       </Box>

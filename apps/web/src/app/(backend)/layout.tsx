@@ -1,9 +1,23 @@
+import DashboardNavbar from '@/components/dashboard/DashboardNavbar';
+import DashboardSidebar from '@/components/dashboard/DashboardSidebar';
+import { getSession } from '@/utils/actions/authentication';
+import { redirect } from 'next/navigation';
 import React from 'react';
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const user = await getSession();
+  if (user?.role !== 'organizer') redirect('/');
+
   return (
-    <>
-      <main>{children}</main>
-    </>
+    <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
+      <DashboardSidebar />
+      <DashboardNavbar>
+        <main className="flex flex-col gap-4 p-4 lg:gap-6">{children}</main>
+      </DashboardNavbar>
+    </div>
   );
 }

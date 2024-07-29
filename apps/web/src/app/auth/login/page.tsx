@@ -1,9 +1,7 @@
 import LoginForm from '@/components/auth/LoginForm';
 import Image from 'next/image';
-import { auth } from '@/auth';
 
 const LoginPage = async () => {
-  const user = await auth();
   return (
     <div className="grid md:grid-cols-2 w-full min-h-screen">
       <div className="hidden md:block relative">
