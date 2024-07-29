@@ -1,7 +1,7 @@
-import React, { ReactNode } from "react";
-import { Box, SxProps, Theme } from "@mui/system";
+import React, { ReactNode } from 'react';
+import { Box, SxProps, Theme } from '@mui/system';
 
-import Navbar from "./navbar";
+import Navbar from './navbar';
 
 const PageWrapper = ({
   children,
