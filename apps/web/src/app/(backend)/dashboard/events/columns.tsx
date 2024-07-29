@@ -26,7 +26,7 @@ export const columns: ColumnDef<Event>[] = [
     accessorKey: 'end_date',
     header: 'End Date',
     cell: ({ row }) => {
-      return new Date(row.original.end_date).toLocaleDateString('en-US', {
+      return new Date(row.original.end_date).toLocaleDateString('en-UK', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',

@@ -51,7 +51,7 @@ model Points {
 }
 
 model Event {
-  event_id          Int         @id @default(autoincrement())
+  event_id          Int           @id @default(autoincrement())
   event_name        String
   event_description String
   start_date        DateTime
@@ -63,38 +63,30 @@ model Event {
   ticket_limit      Int
   ticket_price      Int
   created_by        Int
-  created_at        DateTime    @default(now())
-  updated_at        DateTime    @updatedAt
-  creator           User        @relation("EventCreatedBy", fields: [created_by], references: [user_id])
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  creator           User          @relation("EventCreatedBy", fields: [created_by], references: [user_id])
   promotions        Promotion[]
   ratings           Rating[]
   tickets           Ticket[]
+  Transaction       Transaction[]
 
   @@index([created_by])
 }
 
 model Ticket {
-  ticket_id    Int           @id @default(autoincrement())
-  user_id      Int
-  event_id     Int
-  price        Float
-  quantity     Int
-  created_at   DateTime      @default(now())
-  updated_at   DateTime      @updatedAt
-  event        Event         @relation(fields: [event_id], references: [event_id])
-  user         User          @relation(fields: [user_id], references: [user_id])
-  transactions Transaction[]
+  ticket_id  Int      @id @default(autoincrement())
+  user_id    Int
+  event_id   Int
+  price      Float
+  quantity   Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  event      Event    @relation(fields: [event_id], references: [event_id])
+  user       User     @relation(fields: [user_id], references: [user_id])
 
   @@index([event_id])
   @@index([user_id])
-}
-
-model Payment {
-  payment_id     Int           @id @default(autoincrement())
-  payment_method String
-  payment_status String
-  payment_date   DateTime      @default(now())
-  transactions   Transaction[]
 }
 
 model Rating {
@@ -126,22 +118,27 @@ model Promotion {
 }
 
 model Transaction {
-  transaction_id   Int      @id @default(autoincrement())
-  user_id          Int
-  ticket_id        Int
-  transaction_date DateTime @default(now())
-  quantity         Int
-  total_amount     Float
-  payment_id       Int
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
-  payment          Payment  @relation(fields: [payment_id], references: [payment_id])
-  ticket           Ticket   @relation(fields: [ticket_id], references: [ticket_id])
-  user             User     @relation(fields: [user_id], references: [user_id])
+  transaction_id     Int               @id @default(autoincrement())
+  user_id            Int
+  event_id           Int
+  event_name         String
+  transaction_date   DateTime          @default(now())
+  quantity           Int
+  total_amount       Float
+  transaction_status TransactionStatus
+  created_at         DateTime          @default(now())
+  updated_at         DateTime          @updatedAt
+  user               User              @relation(fields: [user_id], references: [user_id])
+  event              Event             @relation(fields: [event_id], references: [event_id])
 
   @@index([user_id])
-  @@index([ticket_id])
-  @@index([payment_id])
+  @@index([event_id])
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }
 
 enum Role {

@@ -25,7 +25,6 @@ export async function getTicketByUserAndEventId(
 
 	if (!res.ok) throw new Error("Failed to fetch event");
 
-	// if the ticket returns an empty array, return null
 	const data = await res.json();
 
 	if (data.length === 0) return null;

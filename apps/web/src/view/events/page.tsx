@@ -120,11 +120,17 @@ export default async function EventDetailView({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <BookTicketForm
-                  isUserTicket={userTicket ? true : false}
-                  user_id={user?.user_id}
-                  event={event}
-                />
+                {user?.role === 'organizer' ? (
+                  <div className="text-center text-red-500">
+                    You are an organizer and cannot book tickets for this event.
+                  </div>
+                ) : (
+                  <BookTicketForm
+                    isUserTicket={userTicket ? true : false}
+                    user_id={user?.user_id}
+                    event={event}
+                  />
+                )}
               </CardContent>
             </Card>
           </div>
