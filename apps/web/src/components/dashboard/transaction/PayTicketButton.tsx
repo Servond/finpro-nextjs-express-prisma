@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import { cancelTransaction } from '@/utils/actions/transaction';
+import { payTransaction } from '@/utils/actions/transaction';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
@@ -14,7 +14,7 @@ export default function PayTicketButton({
   const router = useRouter();
   const handlePayment = async () => {
     try {
-      const response = cancelTransaction(transaction_id as number);
+      const response = payTransaction(transaction_id as number);
 
       if (response) {
         toast.promise(response, {

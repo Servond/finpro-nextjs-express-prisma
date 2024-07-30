@@ -22,6 +22,11 @@ export class EventRouter {
 			this.eventController.getEventById.bind(this.eventController),
 		);
 
+		this.router.get(
+			"/:event_id/attendees",
+			this.eventController.getEventAttendees.bind(this.eventController),
+		);
+
 		this.router.post(
 			"/",
 			this.eventController.createEvent.bind(this.eventController),

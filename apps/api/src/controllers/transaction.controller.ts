@@ -12,6 +12,34 @@ export class TransactionController {
 		}
 	}
 
+	async getTransactionsByOrganizerId(req: Request, res: Response) {
+		try {
+			const { organizer_id } = req.params;
+
+			const query = await prisma.$transaction(async (prisma) => {
+				const events = await prisma.event.findMany({
+					where: { created_by: Number(organizer_id) },
+				});
+
+				const transactions = await prisma.transaction.findMany({
+					where: {
+						event_id: { in: events.map((event) => event.event_id) },
+						transaction_status: { notIn: ["PENDING", "FAILED"] },
+					},
+					include: {
+						user: true,
+					},
+				});
+
+				return transactions;
+			});
+
+			return res.status(200).send(query);
+		} catch (error) {
+			return res.status(500).send({ error: "Failed to fetch transactions" });
+		}
+	}
+
 	async getTransactionsByUserId(req: Request, res: Response) {
 		try {
 			const { user_id } = req.params;
@@ -79,6 +107,15 @@ export class TransactionController {
 				await prisma.transaction.update({
 					where: { transaction_id: Number(transaction_id) },
 					data: { transaction_status: "SUCCESS" },
+				});
+
+				await prisma.ticket.create({
+					data: {
+						user_id: transaction.user_id,
+						event_id: transaction.event_id,
+						price: event.ticket_price,
+						quantity: transaction.quantity,
+					},
 				});
 
 				return transaction;

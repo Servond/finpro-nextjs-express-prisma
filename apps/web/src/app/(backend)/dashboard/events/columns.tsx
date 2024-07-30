@@ -10,6 +10,13 @@ export const columns: ColumnDef<Event>[] = [
   {
     accessorKey: 'event_name',
     header: 'Name',
+    cell: ({ row }) => {
+      return (
+        <Link href={`/events/${row.original.event_id}`}>
+          <Button variant="link">{row.original.event_name}</Button>
+        </Link>
+      );
+    },
   },
   {
     accessorKey: 'start_date',
@@ -52,7 +59,7 @@ export const columns: ColumnDef<Event>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center space-x-2">
-          <Link href={`/events/${row.original.event_id}`}>
+          <Link href={`/dashboard/events/${row.original.event_id}`}>
             <Button size="sm" variant="outline">
               View
             </Button>

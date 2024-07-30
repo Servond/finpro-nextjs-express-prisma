@@ -1,29 +1,32 @@
 import { SearchIcon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import Link from 'next/link';
-import { columns } from './columns';
-import { getTransactionsByUserId } from '@/utils/actions/transaction';
+import {
+  getTransactionsByOrganizerId,
+  getTransactionsByUserId,
+} from '@/utils/actions/transaction';
 import { DataTable } from './data-table';
 import { getSession } from '@/utils/actions/authentication';
+import BackButton from '@/components/dashboard/BackButton';
+import { organizerColumns, participantColumns } from './columns';
 
 export default async function TransactionPage() {
   const user = await getSession();
-  const data = await getTransactionsByUserId(user?.user_id as number);
+  const participantData = await getTransactionsByUserId(
+    user?.user_id as number,
+  );
+  const organizerData = await getTransactionsByOrganizerId(
+    user?.user_id as number,
+  );
 
   return (
     <div className="container mx-auto py-10">
-      <div className="flex items-center justify-between mb-6 flex-col sm:flex-row">
-        <div className="relative flex-1 max-w-md w-full mb-4 sm:mb-0">
-          <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search events..."
-            className="pl-8 w-full"
-          />
-        </div>
-        <Link href="/dashboard/events/add"></Link>
-      </div>
-      <DataTable columns={columns} data={data} />
+      <BackButton className="ml-[-1rem]" />
+      {user?.role === 'participant' ? (
+        <DataTable columns={participantColumns} data={participantData} />
+      ) : (
+        <DataTable columns={organizerColumns} data={organizerData} />
+      )}
     </div>
   );
 }

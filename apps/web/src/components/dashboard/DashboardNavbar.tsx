@@ -8,14 +8,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { getSession } from '@/utils/actions/authentication';
-import {
-  Banknote,
-  Folder,
-  HomeIcon,
-  Menu,
-  Settings,
-  Users,
-} from 'lucide-react';
+import { Banknote, Folder, HomeIcon, Menu, User, Users } from 'lucide-react';
 import Link from 'next/link';
 import { ReactNode } from 'react';
 
@@ -50,7 +43,7 @@ export default async function DashboardNavbar({
                   </Button>
                 </Link>
               </DialogClose>
-              {session?.role === 'organizer' && (
+              {session?.role === 'organizer' ? (
                 <>
                   <DialogClose asChild>
                     <Link href="/dashboard/events">
@@ -61,7 +54,7 @@ export default async function DashboardNavbar({
                     </Link>
                   </DialogClose>
                   <DialogClose asChild>
-                    <Link href="/dashboard/finance">
+                    <Link href="/dashboard/attendees">
                       <Button variant="outline" className="w-full">
                         <Users className="mr-2 h-4 w-4" />
                         Attendees
@@ -69,22 +62,23 @@ export default async function DashboardNavbar({
                     </Link>
                   </DialogClose>
                 </>
+              ) : (
+                <DialogClose asChild>
+                  <Link href="/dashboard/transactions">
+                    <Button variant="outline" className="w-full">
+                      <Banknote className="mr-2 h-4 w-4" />
+                      Transactions
+                    </Button>
+                  </Link>
+                </DialogClose>
               )}
-              <DialogClose asChild>
-                <Link href="/dashboard/transactions">
-                  <Button variant="outline" className="w-full">
-                    <Banknote className="mr-2 h-4 w-4" />
-                    Transactions
-                  </Button>
-                </Link>
-              </DialogClose>
 
               <Separator className="my-3" />
               <DialogClose asChild>
-                <Link href="/dashboard/settings">
+                <Link href="/dashboard/profile">
                   <Button variant="outline" className="w-full">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
                   </Button>
                 </Link>
               </DialogClose>

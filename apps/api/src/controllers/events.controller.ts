@@ -29,6 +29,21 @@ export class EventController {
 		}
 	}
 
+	async getEventAttendees(req: Request, res: Response) {
+		try {
+			const { event_id } = req.params;
+
+			const attendees = await prisma.ticket.findMany({
+				where: { event_id: Number(event_id) },
+				include: { user: true, event: true },
+			});
+
+			return res.status(200).send(attendees);
+		} catch (error) {
+			return res.status(500).send({ error: "Failed to fetch attendees" });
+		}
+	}
+
 	async createEvent(req: Request, res: Response) {
 		try {
 			const {

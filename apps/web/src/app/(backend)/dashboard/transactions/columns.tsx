@@ -14,12 +14,14 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Transaction } from '@/types/transaction.types';
+import { Transaction, transactionSchema } from '@/types/transaction.types';
 import { ColumnDef } from '@tanstack/react-table';
 import clsx from 'clsx';
 import Link from 'next/link';
+import { userSchema } from '@/types/user.types';
+import { z } from 'zod';
 
-export const columns: ColumnDef<Transaction>[] = [
+export const participantColumns: ColumnDef<Transaction>[] = [
   {
     accessorKey: 'event_name',
     header: 'Event Name',
@@ -145,6 +147,74 @@ export const columns: ColumnDef<Transaction>[] = [
           )}
         </div>
       );
+    },
+  },
+];
+
+const organizerTransactionsSchema = transactionSchema.extend({
+  user: userSchema,
+});
+
+type OrganizerTransaction = z.infer<typeof organizerTransactionsSchema>;
+
+export const organizerColumns: ColumnDef<OrganizerTransaction>[] = [
+  {
+    accessorKey: 'event_name',
+    header: 'Event Name',
+    cell: ({ row }) => {
+      return (
+        <Link href={`/events/${row.original.event_id}`}>
+          <Button variant="link">{row.original.event_name}</Button>
+        </Link>
+      );
+    },
+  },
+  {
+    accessorKey: 'user.full_name',
+    header: 'Participant Name',
+  },
+  {
+    accessorKey: 'total_amount',
+    header: 'Price to Pay',
+    cell: ({ row }) => {
+      if (row.original.quantity > 1) {
+        return `Rp. ${row.original.total_amount.toLocaleString('id-ID')} (${row.original.quantity} tickets)`;
+      }
+    },
+  },
+  {
+    accessorKey: 'transaction_status',
+    header: 'Payment Status',
+    cell: ({ row }) => {
+      return (
+        <span
+          className={clsx(
+            'px-2 py-1 rounded-full',
+            row.original.transaction_status === 'PENDING'
+              ? 'bg-yellow-100 text-yellow-800'
+              : row.original.transaction_status === 'SUCCESS'
+                ? 'bg-green-100 text-green-800'
+                : 'bg-red-300 text-red-800',
+          )}
+        >
+          {row.original.transaction_status}
+        </span>
+      );
+    },
+  },
+  {
+    accessorKey: 'transaction_date',
+    header: 'Transaction Date',
+    cell: ({ row }) => {
+      const createdAt = row.original.created_at;
+      const date = createdAt ? new Date(createdAt) : new Date();
+      return date.toLocaleString('en-UK', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      });
     },
   },
 ];

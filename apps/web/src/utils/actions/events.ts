@@ -12,6 +12,19 @@ export async function getEvents() {
 	return res.json();
 }
 
+export async function getOrganizerEvents(organizer_id: number) {
+	const res = await fetch(
+		`http://localhost:8000/api/organizers/${organizer_id}/events`,
+		{
+			cache: "no-cache",
+		},
+	);
+
+	if (!res.ok) throw new Error("Failed to fetch events");
+
+	return res.json();
+}
+
 export async function getEventById(event_id: number) {
 	const res = await fetch(`http://localhost:8000/api/events/${event_id}`, {
 		cache: "no-cache",
@@ -48,6 +61,19 @@ export async function deleteEvent(event_id: number) {
 	});
 
 	if (!res.ok) throw new Error("Failed to delete event");
+
+	return res.json();
+}
+
+export async function getEventAttendees(event_id: number) {
+	const res = await fetch(
+		`http://localhost:8000/api/events/${event_id}/attendees`,
+		{
+			cache: "no-cache",
+		},
+	);
+
+	if (!res.ok) throw new Error("Failed to fetch event attendees");
 
 	return res.json();
 }

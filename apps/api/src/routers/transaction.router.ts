@@ -26,6 +26,13 @@ export class TransactionRouter {
 			),
 		);
 
+		this.router.get(
+			"/organizer/:organizer_id",
+			this.transactionController.getTransactionsByOrganizerId.bind(
+				this.transactionController,
+			),
+		);
+
 		this.router.post(
 			"/",
 			this.transactionController.createTransaction.bind(

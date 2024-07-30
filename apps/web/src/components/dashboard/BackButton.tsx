@@ -2,11 +2,12 @@
 import { ArrowLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
 
-export default function BackButton() {
+export default function BackButton({ className }: { className?: string }) {
   let router = useRouter();
   return (
-    <div className="flex items-center h-14 p-4">
+    <div className={cn('flex items-center h-14 p-4', className)}>
       <Button
         onClick={() => router.back()}
         variant={'secondary'}
