@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getEvents } from '@/utils/actions/events';
-import { getUsers } from '@/utils/actions/users';
 
 const DashboardPage = async () => {
   const events = await getEvents();
+
   return (
     <div className="flex flex-col justify-center items-start flex-wrap px-4 pt-4 gap-4">
       <Card className="w-[20rem]">

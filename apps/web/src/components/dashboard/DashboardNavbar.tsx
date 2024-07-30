@@ -24,7 +24,7 @@ export default async function DashboardNavbar({
 }: {
   children: ReactNode;
 }) {
-  const user = await getSession();
+  const session = await getSession();
   return (
     <div className="flex flex-col">
       <header className="flex h-14 lg:h-[55px] items-center gap-4 border-b px-3">
@@ -50,14 +50,26 @@ export default async function DashboardNavbar({
                   </Button>
                 </Link>
               </DialogClose>
-              <DialogClose asChild>
-                <Link href="/dashboard/events">
-                  <Button variant="outline" className="w-full">
-                    <Folder className="mr-2 h-4 w-4" />
-                    Events
-                  </Button>
-                </Link>
-              </DialogClose>
+              {session?.role === 'organizer' && (
+                <>
+                  <DialogClose asChild>
+                    <Link href="/dashboard/events">
+                      <Button variant="outline" className="w-full">
+                        <Folder className="mr-2 h-4 w-4" />
+                        Events
+                      </Button>
+                    </Link>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Link href="/dashboard/finance">
+                      <Button variant="outline" className="w-full">
+                        <Users className="mr-2 h-4 w-4" />
+                        Attendees
+                      </Button>
+                    </Link>
+                  </DialogClose>
+                </>
+              )}
               <DialogClose asChild>
                 <Link href="/dashboard/transactions">
                   <Button variant="outline" className="w-full">
@@ -66,14 +78,7 @@ export default async function DashboardNavbar({
                   </Button>
                 </Link>
               </DialogClose>
-              <DialogClose asChild>
-                <Link href="/dashboard/attendees">
-                  <Button variant="outline" className="w-full">
-                    <Users className="mr-2 h-4 w-4" />
-                    Attendees
-                  </Button>
-                </Link>
-              </DialogClose>
+
               <Separator className="my-3" />
               <DialogClose asChild>
                 <Link href="/dashboard/settings">
@@ -87,11 +92,7 @@ export default async function DashboardNavbar({
           </SheetContent>
         </Dialog>
         <div className="flex justify-center items-center gap-2 ml-auto">
-          {user ? (
-            <p>Welcome, {user.full_name}</p>
-          ) : (
-            <p>You are not logged in</p>
-          )}
+          <p>Welcome, {session?.full_name}</p>
         </div>
       </header>
       {children}

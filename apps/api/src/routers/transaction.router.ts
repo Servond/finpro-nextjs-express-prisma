@@ -32,6 +32,20 @@ export class TransactionRouter {
 				this.transactionController,
 			),
 		);
+
+		this.router.post(
+			"/:transaction_id/pay",
+			this.transactionController.payTransaction.bind(
+				this.transactionController,
+			),
+		);
+
+		this.router.post(
+			"/:transaction_id/cancel",
+			this.transactionController.cancelTransaction.bind(
+				this.transactionController,
+			),
+		);
 	}
 
 	getRouter(): Router {

@@ -39,3 +39,39 @@ export async function createTransaction(data: Transaction) {
 		return { error: "Something went wrong!" };
 	}
 }
+
+export async function payTransaction(transaction_id: number) {
+	try {
+		const res = await fetch(
+			`http://localhost:8000/api/transactions/${transaction_id}/pay`,
+			{
+				cache: "no-cache",
+				method: "POST",
+			},
+		);
+
+		if (!res.ok) throw new Error("Failed to pay transaction");
+
+		return res.json();
+	} catch (error) {
+		return { error: "Something went wrong!" };
+	}
+}
+
+export async function cancelTransaction(transaction_id: number) {
+	try {
+		const res = await fetch(
+			`http://localhost:8000/api/transactions/${transaction_id}/cancel`,
+			{
+				cache: "no-cache",
+				method: "POST",
+			},
+		);
+
+		if (!res.ok) throw new Error("Failed to cancel transaction");
+
+		return res.json();
+	} catch (error) {
+		return { error: "Something went wrong!" };
+	}
+}
