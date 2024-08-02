@@ -13,13 +13,18 @@
   "devDependencies": {
     "@commitlint/cli": "^18.4.2",
     "@commitlint/config-conventional": "^18.4.2",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.11",
     "eslint": "^8.48.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.1.0",
+    "nodemon": "^3.1.4",
     "prettier": "^3.1.0",
+    "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
     "tsconfig": "*",
-    "turbo": "latest"
+    "turbo": "latest",
+    "typescript": "^5.5.3"
   },
   "name": "finpro-nextjs-express-prisma",
   "packageManager": "npm@8.15.0",
@@ -31,5 +36,27 @@
     "hooks": {
       "pre-commit": "npx lint-staged"
     }
+  },
+  "description": "This project uses React.js with NextJS for the frontend, Express.js for the backend, and TurboRepo for monorepo management, facilitating rapid development of a scalable web application with streamlined collaboration and efficient server-client interactions.",
+  "version": "1.0.0",
+  "main": "commitlint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anastasiaastrid/mp-10.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anastasiaastrid/mp-10/issues"
+  },
+  "homepage": "https://github.com/anastasiaastrid/mp-10#readme",
+  "dependencies": {
+    "@prisma/client": "^5.17.0",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "prisma": "^5.17.0"
   }
 }
