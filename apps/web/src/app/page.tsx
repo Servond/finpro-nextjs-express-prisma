@@ -5,6 +5,7 @@ import axios from 'axios';
 import Image from 'next/image';
 import styles from './page.module.css';
 import { Event } from '../types';  
+import HomePage from './homepage/page';
 
 
 export default function Home() {
@@ -22,6 +23,9 @@ export default function Home() {
 
   return (
     <main className={styles.main}>
+       <div>
+        <HomePage />
+      </div>
       <div className={styles.description}>
         <p>
           Get started by editing&nbsp;
@@ -68,4 +72,5 @@ export default function Home() {
       </div>
     </main>
   );
+  ;
 }

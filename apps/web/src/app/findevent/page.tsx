@@ -1,4 +1,4 @@
-import FindEventsPage from '../../components/homepage-view/components/findEvents';
+import FindEventsPage from '@/view/events/component/homepage-view/components/findEvents';
 import React from 'react';
 
 const FindEvents = () => {

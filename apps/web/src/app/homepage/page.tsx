@@ -1,4 +1,4 @@
-import HomePageView from '@/components/homepageview';
+import HomePageView from '@/view/events/homepageview';
 
 const HomePage = () => {
   return (

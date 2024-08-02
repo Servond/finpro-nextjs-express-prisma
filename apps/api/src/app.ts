@@ -8,8 +8,9 @@ import { authenticateJWT } from './middlewares/auth.middleware';
 
 export default class App {
   private app: Express;
+  public port: string | number;
 
-  constructor() {
+  constructor(routes: Routes[]) {
     this.app = express();
     this.configure();
     this.routes();

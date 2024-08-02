@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,7 +6,6 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
 
 model Event {
   id            Int         @id @default(autoincrement())
@@ -80,7 +78,6 @@ model Order {
   ticket        Ticket    @relation(fields: [ticketId], references: [id])
 }
 
-
 model User {
   userId        Int    @id @default(autoincrement())
   username      String @unique 
@@ -139,6 +136,5 @@ model DiscountCoupon {
   expiryDate       DateTime
   User             User      @relation("UserDiscounts", fields: [userId], references: [userId])
 }
-
 
 

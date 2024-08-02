@@ -1,30 +1,31 @@
-const BASE_URL = 'http://localhost:3000/api';
+import api from './api';
 
 export const fetchEvents = async (
   currentPage: number,
   eventsPerPage: number,
 ) => {
   try {
-    const response = await fetch(`${BASE_URL}/events`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch events');
-    }
-    const eventData = await response.json();
-    return eventData;
+    const response = await api.get('/events', {
+      params: {
+        page: currentPage,
+        limit: eventsPerPage,
+      },
+    });
+    return response.data;
   } catch (error) {
-    throw error;
+    throw new Error('Failed to fetch events');
   }
 };
 
 export const fetchFilteredEvents = async (search: string, location: string) => {
   try {
-    const response = await fetch(
-      `${BASE_URL}/events/search?search=${encodeURIComponent(search)}&location=${encodeURIComponent(location)}`,
-    );
-    if (!response.ok) {
-      throw new Error('Failed to fetch filtered events');
-    }
-    return response.json();
+    const response = await api.get('/events/search', {
+      params: {
+        search: search,
+        location: location,
+      },
+    });
+    return response.data;
   } catch (error) {
     throw new Error('Failed to fetch filtered events');
   }
@@ -32,11 +33,8 @@ export const fetchFilteredEvents = async (search: string, location: string) => {
 
 export const fetchEventById = async (eventId: string) => {
   try {
-    const response = await fetch(`${BASE_URL}/events/${eventId}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch event by id');
-    }
-    return response.json();
+    const response = await api.get(`/events/${eventId}`);
+    return response.data;
   } catch (error) {
     throw new Error('Failed to fetch event by id');
   }

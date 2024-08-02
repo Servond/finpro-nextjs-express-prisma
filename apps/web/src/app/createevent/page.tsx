@@ -1,4 +1,4 @@
-import CreateEventFormView from '../../components/createform-view/createEventForm';
+import CreateEventFormView from '@/view/events/component/createform-view/createEventForm';
 
 const CreateEventForm = () => {
   return (
