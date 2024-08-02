@@ -10,18 +10,35 @@
     "test": "npx cypress verify & cypress run --component"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.2.6",
+    "autoprefixer": "^10.4.19",
+    "axios": "^1.7.2",
+    "cross-env": "^7.0.3",
+    "formik": "^2.4.6",
+    "lucide-react": "^0.407.0",
     "next": "14.0.4",
+    "postcss": "^8.4.39",
     "react": "^18",
     "react-dom": "^18",
-    "cross-env": "^7.0.3"
+    "react-icons": "^5.2.1",
+    "react-redux": "^9.1.2",
+    "react-router-dom": "^6.24.1",
+    "react-slick": "^0.30.2",
+    "redux": "^5.0.1",
+    "slick-carousel": "^1.8.1",
+    "swiper": "^11.1.5",
+    "use-debounce": "^10.0.1",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-slick": "^0.23.13",
     "cypress": "^13.6.2",
     "eslint": "^8",
-    "eslint-config-next": "14.0.4",
+    "eslint-config-next": "^14.0.4",
+    "tailwindcss": "^3.4.4",
     "typescript": "^5"
   }
 }

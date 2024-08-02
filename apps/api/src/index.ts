@@ -1,10 +1,10 @@
 import App from './app';
+import { EventsRouter } from './routers/events.router';
+import {CheckoutRoutes} from './routers/checkout.router';
 
-const main = () => {
-  // init db here
+const routes = [new EventsRouter(), new CheckoutRoutes()];
+const app = new App(routes);
 
-  const app = new App();
-  app.start();
-};
+app.listen();
 
-main();
+console.log('Application started successfully.');

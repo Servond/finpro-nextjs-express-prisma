@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,12 +7,134 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("samples") // if you want to use snake_case format
+model Event {
+  id            Int         @id @default(autoincrement())
+  organizerName String
+  eventTitle    String
+  description   String      @db.VarChar(10000)
+  imagePath     String?
+  date          DateTime
+  startTime     String
+  endTime       String
+  location      String
+  address       String
+  venueName     String
+  price         Float?
+  capacity      Int
+  categoryId    Int
+  category      Category    @relation(fields: [categoryId], references: [id])
+  tickets       Ticket[]
+  promotions    Promotion[]
+  reviews       Review[]
+  orders        Order[]
 }
+
+model Category {
+  id     Int     @id @default(autoincrement())
+  name   String
+  events Event[]
+}
+
+model Ticket {
+  id          Int     @id @default(autoincrement())
+  type        String
+  price       Float 
+  description String?
+  eventId     Int
+  event       Event   @relation(fields: [eventId], references: [id])
+  orders      Order[]
+}
+
+model Promotion {
+  id        Int      @id @default(autoincrement())
+  eventId   Int
+  code      String
+  type      String   
+  amount    Float
+  maxUses   Int
+  startDate DateTime
+  endDate   DateTime
+  description String?
+  event     Event    @relation(fields: [eventId], references: [id])
+}
+
+model Review {
+  id        Int    @id @default(autoincrement())
+  eventId   Int
+  name      String?
+  rating    Int
+  comment   String
+  event     Event  @relation(fields: [eventId], references: [id])
+}
+
+model Order {
+  id            Int       @id @default(autoincrement())
+  eventId       Int
+  ticketId      Int
+  quantity      Int
+  totalPrice    Float
+  orderDate     DateTime  @default(now())
+  event         Event     @relation(fields: [eventId], references: [id])
+  ticket        Ticket    @relation(fields: [ticketId], references: [id])
+}
+
+model User {
+  userId        Int    @id @default(autoincrement())
+  username      String @unique 
+  email         String @unique
+  password      String 
+  cellphone     String?
+  firstname     String?
+  lastname      String?
+  company       String?
+  website       String?
+  address       String?
+  city          String?
+  country       String?
+  postalCode    String?
+  state         String?
+  isVerified    Boolean @default(false)
+  roleId        Int 
+  role          Role @relation(fields: [roleId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  referralCode  String  @unique
+  referredBy    String?
+  usedReferral  Boolean @default(false) 
+  Points        Points[]
+  DiscountCoupons DiscountCoupon[] @relation("UserDiscounts")
+  profileImage   Bytes?
+}
+
+model Role {
+  id   Int     @id @default(autoincrement())
+  name String  @unique
+  users User[]
+}
+
+model Points {
+  pointsId            Int      @id @default(autoincrement())
+  pointsBalance       Int
+  userId              Int
+  expiryDate          DateTime
+  User                User     @relation(fields: [userId], references: [userId])
+  PointsExpiryDates    PointsExpiry[]
+}
+
+model PointsExpiry {
+  pointsExpiryId  Int       @id @default(autoincrement())
+  expiryDate      DateTime
+  pointsId        Int
+  Points          Points    @relation(fields: [pointsId], references: [pointsId])
+}
+
+
+model DiscountCoupon {
+  code             String    @id
+  userId           Int
+  discountAmount   Float
+  expiryDate       DateTime
+  User             User      @relation("UserDiscounts", fields: [userId], references: [userId])
+}
+
+

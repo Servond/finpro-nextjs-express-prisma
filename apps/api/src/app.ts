@@ -1,6 +1,4 @@
 import express, {
-  json,
-  urlencoded,
   Express,
   Request,
   Response,
@@ -8,61 +6,69 @@ import express, {
   Router,
 } from 'express';
 import cors from 'cors';
-import { PORT } from './config';
-import { SampleRouter } from './routers/sample.router';
+import path from 'path';
+import upload from './middlewares/upload';
+import { Routes } from './interfaces/router';
+import { ErrorMiddleware } from './middlewares/error.middleware';
 
 export default class App {
   private app: Express;
+  public port: string | number;
 
-  constructor() {
+  constructor(routes: Routes[]) {
     this.app = express();
-    this.configure();
-    this.routes();
-    this.handleError();
+    this.port = 8080;
+    this.initializeMiddleware();
+    this.initializeRoutes(routes);
+    this.initializeErrorHandling();
   }
 
-  private configure(): void {
+  private initializeMiddleware(): void {
     this.app.use(cors());
-    this.app.use(json());
-    this.app.use(urlencoded({ extended: true }));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use('/images', express.static(path.join(__dirname, 'public')));
+    this.app.use(
+      '/uploads',
+      express.static(path.join(__dirname, '..', 'uploads')),
+    );
   }
 
-  private handleError(): void {
-    // not found
-    this.app.use((req: Request, res: Response, next: NextFunction) => {
-      if (req.path.includes('/api/')) {
-        res.status(404).send('Not found !');
-      } else {
-        next();
-      }
+  private initializeRoutes(routes: Routes[]): void {
+    routes.forEach((route) => {
+      this.app.use('/api', route.router);
     });
 
-    // error
-    this.app.use(
-      (err: Error, req: Request, res: Response, next: NextFunction) => {
-        if (req.path.includes('/api/')) {
-          console.error('Error : ', err.stack);
-          res.status(500).send('Error !');
-        } else {
-          next();
+    this.app.post(
+      '/api/upload',
+      upload.single('file'),
+      (req: Request, res: Response) => {
+        try {
+          res
+            .status(200)
+            .json({ message: 'File uploaded successfully', file: req.file });
+        } catch (error) {
+          res.status(500).json({ message: 'File upload failed', error });
         }
       },
     );
   }
 
-  private routes(): void {
-    const sampleRouter = new SampleRouter();
-
-    this.app.get('/api', (req: Request, res: Response) => {
-      res.send(`Hello, Purwadhika Student API!`);
+  private initializeErrorHandling(): void {
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
+      if (req.path.startsWith('/api/')) {
+        res.status(404).send('API Route not found');
+      } else {
+        next();
+      }
     });
 
-    this.app.use('/api/samples', sampleRouter.getRouter());
+    this.app.use(ErrorMiddleware);
   }
 
-  public start(): void {
-    this.app.listen(PORT, () => {
-      console.log(`  ➜  [API] Local:   http://localhost:${PORT}/`);
+  public listen(): void {
+    this.app.listen(this.port, () => {
+      console.log(`Server started on port ${this.port}`);
     });
   }
 }
