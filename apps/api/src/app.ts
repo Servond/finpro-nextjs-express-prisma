@@ -1,10 +1,14 @@
-import express, { json, urlencoded, Express, Request, Response, NextFunction } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import { PORT } from './config';
-import SampleRouter from './routers/sample.router';
+import path from 'path';
 import multer from 'multer';
+import uploadMiddleware from './middlewares/upload';
+import { Routes } from './interfaces/router';
+import { ErrorMiddleware } from './middlewares/error.middleware';
+import SampleRouter from './routers/sample.router';
 import { SampleController } from './controllers/sample.controller';
 import { authenticateJWT } from './middlewares/auth.middleware';
+import { PORT } from './config';
 
 export default class App {
   private app: Express;
@@ -12,47 +16,51 @@ export default class App {
 
   constructor(routes: Routes[]) {
     this.app = express();
-    this.configure();
-    this.routes();
-    this.handleError();
+    this.port = PORT || 8080;
+    this.initializeMiddleware();
+    this.initializeRoutes(routes);
+    this.initializeAdditionalRoutes();
+    this.initializeErrorHandling();
   }
 
-  private configure(): void {
+  private initializeMiddleware(): void {
     const corsOptions = {
       origin: 'http://localhost:3001', // Frontend URL
       credentials: true,
     };
     this.app.use(cors(corsOptions));
-    this.app.use(json());
-    this.app.use(urlencoded({ extended: true }));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+    this.app.use('/images', express.static(path.join(__dirname, 'public')));
+    this.app.use(
+      '/uploads',
+      express.static(path.join(__dirname, '..', 'uploads')),
+    );
   }
 
-  private handleError(): void {
-    // not found
-    this.app.use((req: Request, res: Response, next: NextFunction) => {
-      if (req.path.includes('/api/')) {
-        res.status(404).send('Not found !');
-      } else {
-        next();
-      }
+  private initializeRoutes(routes: Routes[]): void {
+    routes.forEach((route) => {
+      this.app.use('/api', route.router);
     });
 
-    // error
-    this.app.use(
-      (err: Error, req: Request, res: Response, next: NextFunction) => {
-        if (req.path.includes('/api/')) {
-          console.error('Error : ', err.stack);
-          res.status(500).send('Error !');
-        } else {
-          next();
+    this.app.post(
+      '/api/upload',
+      uploadMiddleware.single('file'),
+      (req: Request, res: Response) => {
+        try {
+          res
+            .status(200)
+            .json({ message: 'File uploaded successfully', file: req.file });
+        } catch (error) {
+          res.status(500).json({ message: 'File upload failed', error });
         }
       },
     );
   }
 
-  private routes(): void {
+  private initializeAdditionalRoutes(): void {
     this.app.get('/api', (req: Request, res: Response) => {
-      res.send(`Hello, Purwadhika Student API!`);
+      res.send('Hello, Purwadhika Student API!');
     });
 
     this.app.use('/api', SampleRouter);
@@ -61,14 +69,44 @@ export default class App {
     const storage = multer.memoryStorage();
     const upload = multer({ storage });
 
-    this.app.put('/api/user', authenticateJWT, upload.single('profileImage'), (req, res) => {
-      sampleController.updateUser(req, res);
-    });
+    this.app.put(
+      '/api/user',
+      authenticateJWT,
+      upload.single('profileImage'),
+      (req, res) => {
+        sampleController.updateUser(req, res);
+      },
+    );
   }
 
-  public start(): void {
-    this.app.listen(PORT, () => {
-      console.log(`  ➜  [API] Local:   http://localhost:${PORT}/`);
+  private initializeErrorHandling(): void {
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
+      if (req.path.startsWith('/api/')) {
+        res.status(404).send('API Route not found');
+      } else {
+        next();
+      }
+    });
+
+    this.app.use(ErrorMiddleware);
+
+    // Additional error handling
+    this.app.use(
+      (err: Error, req: Request, res: Response, next: NextFunction) => {
+        if (req.path.includes('/api/')) {
+          console.error('Error: ', err.stack);
+          res.status(500).send('Error!');
+        } else {
+          next();
+        }
+      },
+    );
+  }
+
+  public listen(): void {
+    this.app.listen(this.port, () => {
+      console.log(`Server started on port ${this.port}`);
+      console.log(`  ➜  [API] Local:   http://localhost:${this.port}/`);
     });
   }
 }
