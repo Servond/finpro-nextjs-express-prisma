@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 import styles from './page.module.css';
-import { Event } from '../types';  // Adjust the path as needed
+import { Event } from '../types';  
 
 
 export default function Home() {
   const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    axios.get<Event[]>('http://localhost:3000/api/events')  // Ensure the URL matches your backend port
+    axios.get<Event[]>('http://localhost:3000/api/events')  
       .then(response => {
         setEvents(response.data);
       })

@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image'; // Import the Image component
 import Dashboard from './Dashboard/DashboardPage';
 import Referrals from './Referrals';
 
-// Define the UserContextType
+
 type UserContextType = {
   userId: number;
   roleId: number;
@@ -52,7 +53,12 @@ const Profile: React.FC = () => {
         if (response.ok) {
           const userData = await response.json();
           setUser(userData);
-          setProfileImageUrl(userData.profileImage ? `data:image/jpeg;base64,${userData.profileImage}` : null);
+          if (userData.profileImage) {
+            
+            setProfileImageUrl(`data:image/jpeg;base64,${userData.profileImage}`);
+          } else {
+            setProfileImageUrl(null);
+          }
           setContactInfo({
             firstname: userData.firstname || '',
             lastname: userData.lastname || '',
@@ -125,6 +131,23 @@ const Profile: React.FC = () => {
       if (response.ok) {
         const updatedUser = await response.json();
         setUser(updatedUser);
+        if (updatedUser.profileImage) {
+          setProfileImageUrl(`data:image/jpeg;base64,${updatedUser.profileImage}`);
+        } else {
+          setProfileImageUrl(null);
+        }
+        setContactInfo({
+          firstname: updatedUser.firstname || '',
+          lastname: updatedUser.lastname || '',
+          cellphone: updatedUser.cellphone || '',
+          company: updatedUser.company || '',
+          website: updatedUser.website || '',
+          address: updatedUser.address || '',
+          city: updatedUser.city || '',
+          country: updatedUser.country || '',
+          postalCode: updatedUser.postalCode || '',
+          state: updatedUser.state || '',
+        });
         alert('Profile updated successfully');
       } else {
         alert('Failed to update profile');
@@ -168,7 +191,13 @@ const Profile: React.FC = () => {
               <section className="mb-8">
                 <h2 className="text-xl font-bold mb-4">Profile Photo</h2>
                 {profileImageUrl ? (
-                  <img src={profileImageUrl} alt="Profile" className="mb-4 w-32 h-32 object-cover rounded-full" />
+                  <Image
+                    src={profileImageUrl}
+                    alt="Profile"
+                    className="mb-4 w-32 h-32 object-cover rounded-full"
+                    width={128}
+                    height={128}
+                  />
                 ) : (
                   <p>No profile photo uploaded</p>
                 )}

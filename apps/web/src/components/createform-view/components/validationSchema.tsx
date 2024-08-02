@@ -17,12 +17,12 @@ const validationSchema = Yup.object().shape({
   ),
   price: Yup.number().when('isFree', {
     is: false,
-    then: (schema) =>
+    then: (schema: { required: (arg0: string) => { (): any; new(): any; integer: { (arg0: string): { (): any; new(): any; typeError: { (arg0: string): any; new(): any; }; }; new(): any; }; }; }) =>
       schema
         .required('Price is required')
         .integer('Price must be an integer')
         .typeError('Price must be a number without commas or decimals'),
-    otherwise: (schema) => schema.notRequired(),
+    otherwise: (schema: { notRequired: () => any; }) => schema.notRequired(),
   }),
   capacity: Yup.number().required('Capacity is required'),
   tickets: Yup.array()

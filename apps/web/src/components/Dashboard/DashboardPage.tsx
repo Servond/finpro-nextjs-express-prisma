@@ -1,4 +1,4 @@
-"use client"; // Ensure this is at the top
+"use client"; 
 
 import React from 'react';
 import { Bar, Line } from 'react-chartjs-2';

@@ -1,4 +1,4 @@
-// src/app/signup/EnterEmail.tsx
+
 "use client";
 
 import React, { useState } from 'react';

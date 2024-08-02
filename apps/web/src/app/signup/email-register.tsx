@@ -9,7 +9,7 @@ const EmailRegister: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // Send email to the server (optional step)
+
       router.push(`/signup/register?email=${encodeURIComponent(email)}`);
     } catch (error) {
       console.error('Error processing email:', error);

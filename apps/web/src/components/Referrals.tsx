@@ -1,12 +1,13 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-// Define the UserContextType
 type UserContextType = {
   referralCode: string;
   pointsBalance: number;
+  pointsExpiryDate: string | null;
 };
 
 const Referrals: React.FC = () => {
@@ -31,6 +32,7 @@ const Referrals: React.FC = () => {
           setUser({
             referralCode: userData.referralCode,
             pointsBalance: userData.pointsBalance,
+            pointsExpiryDate: userData.pointsExpiryDate,
           });
         } else {
           router.push('/login');
@@ -47,11 +49,16 @@ const Referrals: React.FC = () => {
     return <div>Loading...</div>;
   }
 
+  const formattedExpiryDate = user.pointsExpiryDate
+    ? new Date(user.pointsExpiryDate).toLocaleDateString()
+    : 'No Expiry Date';
+
   return (
-    <div>
+    <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Referrals</h2>
       <p>Referral Code: {user.referralCode}</p>
       <p>Points Balance: {user.pointsBalance}</p>
+      <p>Points Expiry Date: {formattedExpiryDate}</p>
     </div>
   );
 };

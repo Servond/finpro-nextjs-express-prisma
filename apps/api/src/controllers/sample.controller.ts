@@ -10,16 +10,8 @@ const prisma = new PrismaClient();
 const SECRET_KEY = 'your-secret-key';
 
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function (req, file, cb) {
-    cb(null, uuidv4() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage: storage });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 export class SampleController {
   
@@ -158,16 +150,23 @@ async getUser(req: Request, res: Response) {
         Points: {
           select: {
             pointsBalance: true,
+            expiryDate: true, 
           },
         },
       },
     });
+
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
+
+    const pointsExpiryDate = user.Points.length ? user.Points[0].expiryDate : null;
+
     res.json({
       ...user,
+      profileImage: user.profileImage ? user.profileImage.toString('base64') : null,
       pointsBalance: user.Points.reduce((acc, point) => acc + point.pointsBalance, 0),
+      pointsExpiryDate,
     });
   } catch (error) {
     console.error('Error fetching user data:', error);
@@ -198,13 +197,42 @@ async updateUser(req: Request, res: Response) {
         profileImage: profileImage ? Buffer.from(profileImage) : undefined,
       },
     });
-    res.status(200).json(updatedUser);
+
+    // Fetch the updated user with Points information
+    const userWithPoints = await prisma.user.findUnique({
+      where: { userId },
+      select: {
+        userId: true,
+        roleId: true,
+        username: true,
+        email: true,
+        referralCode: true,
+        firstname: true,
+        lastname: true,
+        cellphone: true,
+        company: true,
+        website: true,
+        address: true,
+        city: true,
+        country: true,
+        postalCode: true,
+        state: true,
+        profileImage: true,
+        Points: {
+          select: {
+            pointsBalance: true,
+            expiryDate: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json(userWithPoints);
   } catch (error) {
     console.error('Error updating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }
-
 
 
 

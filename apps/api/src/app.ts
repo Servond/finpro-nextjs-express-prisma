@@ -1,7 +1,10 @@
 import express, { json, urlencoded, Express, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { PORT } from './config';
-import SampleRouter from './routers/sample.router';  // Default import
+import SampleRouter from './routers/sample.router';
+import multer from 'multer';
+import { SampleController } from './controllers/sample.controller';
+import { authenticateJWT } from './middlewares/auth.middleware';
 
 export default class App {
   private app: Express;
@@ -14,7 +17,11 @@ export default class App {
   }
 
   private configure(): void {
-    this.app.use(cors());
+    const corsOptions = {
+      origin: 'http://localhost:3001', // Frontend URL
+      credentials: true,
+    };
+    this.app.use(cors(corsOptions));
     this.app.use(json());
     this.app.use(urlencoded({ extended: true }));
   }
@@ -47,7 +54,15 @@ export default class App {
       res.send(`Hello, Purwadhika Student API!`);
     });
 
-    this.app.use('/api', SampleRouter);  // Use the default import directly
+    this.app.use('/api', SampleRouter);
+
+    const sampleController = new SampleController();
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+
+    this.app.put('/api/user', authenticateJWT, upload.single('profileImage'), (req, res) => {
+      sampleController.updateUser(req, res);
+    });
   }
 
   public start(): void {

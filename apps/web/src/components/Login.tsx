@@ -19,7 +19,7 @@ const Login: React.FC = () => {
       if (response.data.roleId === 1) {  // Assuming 1 is the role ID for organizers
         router.push('/Interests');
       } else if (response.data.roleId === 2) {  // Assuming 2 is the role ID for users
-        router.push('/');
+        router.push('/homepage');
       } else {
         console.error('Unexpected roleId:', response.data.roleId);
       }

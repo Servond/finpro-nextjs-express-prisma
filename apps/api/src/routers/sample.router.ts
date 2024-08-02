@@ -5,11 +5,12 @@ import multer from 'multer';
 
 const router = Router();
 const sampleController = new SampleController();
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/register', sampleController.register.bind(sampleController));
 router.post('/login', sampleController.login.bind(sampleController));
-router.post('/user/update', authenticateJWT, upload.single('profileImage'), sampleController.updateUser.bind(sampleController));
+router.put('/user', authenticateJWT, upload.single('profileImage'), sampleController.updateUser.bind(sampleController));
+router.get('/user', authenticateJWT, sampleController.getUser.bind(sampleController));
 
 router.post('/events', authenticateJWT, authorizeRoles(1 /* organizer role ID */), sampleController.createEvent.bind(sampleController));
 router.get('/events', authenticateJWT, sampleController.getEvents.bind(sampleController));  // Only authenticated users can get events
