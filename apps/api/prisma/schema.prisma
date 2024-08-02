@@ -9,6 +9,78 @@ datasource db {
 }
 
 
+model Event {
+  id            Int         @id @default(autoincrement())
+  organizerName String
+  eventTitle    String
+  description   String      @db.VarChar(10000)
+  imagePath     String?
+  date          DateTime
+  startTime     String
+  endTime       String
+  location      String
+  address       String
+  venueName     String
+  price         Float?
+  capacity      Int
+  categoryId    Int
+  category      Category    @relation(fields: [categoryId], references: [id])
+  tickets       Ticket[]
+  promotions    Promotion[]
+  reviews       Review[]
+  orders        Order[]
+}
+
+model Category {
+  id     Int     @id @default(autoincrement())
+  name   String
+  events Event[]
+}
+
+model Ticket {
+  id          Int     @id @default(autoincrement())
+  type        String
+  price       Float 
+  description String?
+  eventId     Int
+  event       Event   @relation(fields: [eventId], references: [id])
+  orders      Order[]
+}
+
+model Promotion {
+  id        Int      @id @default(autoincrement())
+  eventId   Int
+  code      String
+  type      String   
+  amount    Float
+  maxUses   Int
+  startDate DateTime
+  endDate   DateTime
+  description String?
+  event     Event    @relation(fields: [eventId], references: [id])
+}
+
+model Review {
+  id        Int    @id @default(autoincrement())
+  eventId   Int
+  name      String?
+  rating    Int
+  comment   String
+  event     Event  @relation(fields: [eventId], references: [id])
+}
+
+model Order {
+  id            Int       @id @default(autoincrement())
+  eventId       Int
+  ticketId      Int
+  quantity      Int
+  totalPrice    Float
+  orderDate     DateTime  @default(now())
+  event         Event     @relation(fields: [eventId], references: [id])
+  ticket        Ticket    @relation(fields: [ticketId], references: [id])
+}
+
+
 model User {
   userId        Int    @id @default(autoincrement())
   username      String @unique 
