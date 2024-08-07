@@ -1,21 +1,219 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model event {
+//   id         Int      @id @default(autoincrement())
+//   name       String
+//   date       DateTime
+//   location   String
+//   promoterId Int
+//   price      String
 
-  @@map("samples") // if you want to use snake_case format
+//   @@index([promoterId], map: "Event_promoterId_fkey")
+// }
+
+// model referral {
+//   id         Int      @id @default(autoincrement())
+//   referrerId Int
+//   refereeId  Int
+//   points     Int
+//   createdAt  DateTime @default(now())
+//   expiresAt  DateTime
+
+//   @@index([refereeId], map: "Referral_refereeId_fkey")
+//   @@index([referrerId], map: "Referral_referrerId_fkey")
+// }
+
+// model registration {
+//   id        Int      @id @default(autoincrement())
+//   userId    Int
+//   eventId   Int
+//   createdAt DateTime @default(now())
+
+//   @@index([eventId], map: "Registration_eventId_fkey")
+//   @@index([userId], map: "Registration_userId_fkey")
+// }
+
+// model transaction {
+//   id        Int      @id @default(autoincrement())
+//   userId    Int
+//   eventId   Int
+//   amount    Float
+//   createdAt DateTime @default(now())
+
+//   @@index([eventId], map: "Transaction_eventId_fkey")
+//   @@index([userId], map: "Transaction_userId_fkey")
+// }
+
+model user {
+
+ id               Int       @id @default(autoincrement())
+  email            String    @unique
+  username         String    @unique
+  password         String
+  referralCode     String    @unique
+  profile          Profile?
+  roleId           Int
+  role             Role      @relation(fields: [roleId], references: [id])
+  referrerId       Int?
+  referrer         user?     @relation(name: "referred_by", fields: [referrerId], references: [id])
+  referee          user[]    @relation(name: "referred_by")
+  points           Point[]
+
+  discount         Discount?
+  isVerified       Boolean   @default(false)
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @default(now()) @updatedAt
+  
+  @@index([referrerId], name: "referrerId")
+  @@index([roleId], name: "roleId")
 }
+
+
+
+
+// enum user_role {
+//   CUSTOMER
+//   PROMOTER
+// }
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String
+  user user[]
+ 
+}
+
+model Profile {
+  id         Int       @id @default(autoincrement())
+  firstname  String?
+  lastname   String?
+  birthDate  DateTime?
+  phone      String?
+  gender     Gender?
+  avatar     String?
+  customerId Int       @unique
+  customer   user      @relation(fields: [customerId], references: [id])
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
+
+  
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+model Point {
+  id              Int      @id @default(autoincrement())
+  pointsEarned    Int
+  pointsRemaining Int
+  pointsExpiry    DateTime
+  pointsOwnerId   Int
+  pointsOwner     user     @relation(fields: [pointsOwnerId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+
+  @@index([pointsOwnerId], name: "pointsOwnerId")
+}
+
+model Event {
+  id             Int      @id @default(autoincrement())
+  organizerId    Int
+  name           String
+  description    String?
+  location       String
+  date           DateTime
+  time           DateTime
+  ticketType     String
+  price          Int      @default(0)
+  availableSeats Int
+  promotion      Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizerId], name: "organizerId")
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  customerId Int
+  eventId    Int
+  rating     Int
+  reviewText String
+  createdAt  DateTime @default(now())
+
+  
+}
+
+model Ticket {
+  id            Int      @id @default(autoincrement())
+  eventId       Int
+  customerId    Int
+  transactionId Int
+  price         Int
+  status        Int
+  createdAt     DateTime @default(now())
+
+  }
+
+model Transaction {
+  id            Int      @id @default(autoincrement())
+  customerId    Int
+  eventId       Int
+  totalAmount   Int
+  promotionsId  Int
+  paymentStatus String
+  createdAt     DateTime @default(now())
+
+  
+}
+
+model Promotion {
+  id             Int      @id @default(autoincrement())
+  eventId        Int
+  code           String   @unique
+  discountAmount Int
+  usageLimit     Int
+  validFrom      DateTime
+  validTo        DateTime
+  createdAt      DateTime @default(now())
+
+  @@index([eventId], name: "eventId")
+  @@index([code], name: "code")
+}
+
+enum ticketType {
+  paid
+  free
+}
+
+enum paymentStatus {
+  paid
+  pending
+  failed
+  cancelled
+}
+
+model Discount {
+  id             Int      @id @default(autoincrement())
+  discountRate   Float
+  discountExpiry DateTime
+  customerId     Int      @unique
+  customer       user     @relation(fields: [customerId], references: [id])
+
+  @@index([customerId], name: "customerId")
+}
+

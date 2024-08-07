@@ -1,0 +1,62 @@
+[
+    {
+        "id": 1, 
+        "name": "HINDIA", 
+        "path": "/assets/Hindia.jpg"
+    },
+    {
+        "id": 2, 
+        "name": "RAISA", 
+        "path": "/assets/Raisa.jpg"
+    },
+    {
+        "id": 3, 
+        "name": "PAMUNGKAS", 
+        "path": "/assets/Pamungkas.jpg"
+    },
+    {
+        "id": 4, 
+        "name": "ISYANA SARASVATI", 
+        "path": "/assets/Isyana.jpg"
+    },
+    {
+        "id": 5, 
+        "name": "IQBAL RAMADHAN", 
+        "path": "/assets/Iqbal.jpg"
+    },
+    {
+        "id": 6, 
+        "name": "FEBY PUTRI", 
+        "path": "/assets/Feby.jpg"
+    },
+    {
+        "id": 7, 
+        "name": "KUNTO AJI", 
+        "path": "/assets/Kunto Aji.jpg"
+    },
+    {
+        "id": 8, 
+        "name": "SAL PRIADI", 
+        "path": "/assets/Sal Priadi.jpg"
+    },
+    {
+        "id": 9, 
+        "name": "NADIN AMIZAH", 
+        "path": "/assets/Nadin Amiza.jpg"
+    },
+    {
+        "id": 10, 
+        "name": "FIERSA BESARI", 
+        "path": "/assets/Fiersa.jpg"
+    },
+    {
+        "id": 11, 
+        "name": "DANILLA RIYADI", 
+        "path": "/assets/Danilla.jpg"
+    },
+    {
+        "id": 12, 
+        "name": "JASON RANTI", 
+        "path": "/assets/Jason.jpg"
+    }
+]

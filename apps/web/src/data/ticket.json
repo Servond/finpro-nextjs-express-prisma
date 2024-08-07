@@ -1,0 +1,14 @@
+[
+    {
+        "mal_id": 1, 
+        "title": "HALAMAN BELAKANG DAY 1",
+        "price": 250000, 
+        "path": "/assets/Ticket1.png"
+    },
+    {
+        "mal_id": 2, 
+        "title": "HALAMAN BELAKANG DAY 2",
+        "price":280000, 
+        "path": "/assets/Ticket2.png"
+    }
+]
