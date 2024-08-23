@@ -10,12 +10,183 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Sample {
-  id        Int      @id @default(autoincrement())
-  name      String
-  code      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model Sample {
+//   id        Int      @id @default(autoincrement())
+//   name      String
+//   code      String   @unique
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
 
-  @@map("samples") // if you want to use snake_case format
+//   @@map("samples") // if you want to use snake_case format
+// }
+
+model Event {
+  id             Int           @id @default(autoincrement())
+  organizerId    Int
+  organizer      User          @relation(fields: [organizerId], references: [id], onDelete: Cascade)
+  thumbnail      String?
+  name           String
+  description    String?
+  location       String
+  dateTime       DateTime      @default(now())
+  ticketType     TicketType
+  price          Int           @default(0)
+  availableSeats Int
+  status         EventStatus   @default(DRAFT)
+  promotion      Promotion[]
+  review         Review[]
+  transaction    Transaction[]
+  ticket         Ticket[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  customerId Int?
+  customer   User?    @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  eventId    Int
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  rating     Int
+  reviewText String
+  createdAt  DateTime @default(now())
+}
+
+model Ticket {
+  id            Int          @id @default(autoincrement())
+  eventId       Int?
+  event         Event?       @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  customerId    Int?
+  customer      User?        @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  transactionId Int?
+  transaction   Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  price         Int
+  status        TicketStatus
+  createdAt     DateTime     @default(now())
+}
+
+model Transaction {
+  id            Int           @id @default(autoincrement())
+  customerId    Int?
+  customer      User?         @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  eventId       Int?
+  event         Event?        @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  amount        Int
+  discount      Int
+  finalAmount   Int
+  paymentStatus PaymentStatus
+  promotionId   Int?
+  promotion     Promotion?    @relation(fields: [promotionId], references: [id], onDelete: SetNull)
+  ticket        Ticket[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now()) @updatedAt
+}
+
+model Promotion {
+  id             Int           @id @default(autoincrement())
+  eventId        Int
+  event          Event         @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  code           String        @unique
+  discountAmount Int
+  usageLimit     Int
+  validFrom      DateTime
+  validTo        DateTime
+  transaction    Transaction[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
+}
+
+enum TicketType {
+  PAID
+  FREE
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  FAILED
+  CANCELLED
+}
+
+enum TicketStatus {
+  BOOKED
+  CHECKED_IN
+  CANCELLED
+}
+
+model User {
+  id               Int           @id @default(autoincrement())
+  email            String        @unique
+  username         String        @unique
+  password         String
+  referralCode     String        @unique
+  profile          Profile?
+  roleId           Int
+  role             Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  referrerId       Int?
+  referrer         User?         @relation(name: "referred_by", fields: [referrerId], references: [id], onDelete: SetNull)
+  referee          User[]        @relation(name: "referred_by")
+  points           Point[]
+  discount         Discount?
+  isVerified       Boolean       @default(false)
+  resetToken       String?
+  resetTokenExpiry DateTime?
+  event            Event[]
+  review           Review[]
+  ticket           Ticket[]
+  transaction      Transaction[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @default(now()) @updatedAt
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String
+  user User[]
+}
+
+model Profile {
+  id         Int       @id @default(autoincrement())
+  firstname  String?
+  lastname   String?
+  birthDate  DateTime?
+  phone      String?
+  gender     Gender?
+  avatar     String?
+  customerId Int       @unique
+  customer   User      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  NON_BINARY
+  PREFER_NOT_TO_SAY
+}
+
+model Point {
+  id              Int      @id @default(autoincrement())
+  pointsEarned    Int
+  pointsRemaining Int
+  pointsExpiry    DateTime
+  pointsOwnerId   Int
+  pointsOwner     User     @relation(fields: [pointsOwnerId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now()) @updatedAt
+}
+
+model Discount {
+  id             Int      @id @default(autoincrement())
+  discountRate   Float
+  discountExpiry DateTime
+  customerId     Int      @unique
+  customer       User     @relation(fields: [customerId], references: [id], onDelete: Cascade)
 }
