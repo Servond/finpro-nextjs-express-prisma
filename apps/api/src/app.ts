@@ -62,7 +62,7 @@ export default class App {
 
   public start(): void {
     this.app.listen(PORT, () => {
-      console.log(`  ➜  [API] Local:   http://localhost:${PORT}/`);
+      console.log(` hello world ➜  [API] Local:   http://localhost:${PORT}/`);
     });
   }
 }
